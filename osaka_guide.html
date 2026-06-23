@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="theme-color" content="#e8513a">
+<title>오사카 커플 가이드 · 2026.6.27–7.1</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+  :root{--bg:#0f1115;--card:#1a1d24;--card2:#222630;--ink:#f2f4f8;--sub:#9aa3b2;--line:#2a2f3a;--accent:#ff5a3c;--accent2:#ffb03a;--ok:#3ad29f;--rain:#4aa8ff;--warn:#ffd24a;--pink:#ff6fae}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);line-height:1.6;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans KR","Apple SD Gothic Neo",sans-serif;font-size:16px;padding-bottom:20px}
+  a{color:var(--accent2);text-decoration:none}
+  header.top{position:sticky;top:0;z-index:60;background:linear-gradient(135deg,#e8513a,#ff7b4a);padding:12px 16px 8px;box-shadow:0 2px 12px rgba(0,0,0,.4)}
+  header.top h1{margin:0;font-size:17px;font-weight:800;letter-spacing:-.3px}
+  header.top .meta{font-size:12px;opacity:.95;margin-top:2px}
+  nav.tabs{position:sticky;top:0;z-index:50;display:flex;overflow-x:auto;background:#13161c;border-bottom:1px solid var(--line);scrollbar-width:none}
+  nav.tabs::-webkit-scrollbar{display:none}
+  nav.tabs button{flex:0 0 auto;background:none;border:none;color:var(--sub);font-size:13px;padding:11px 12px;font-weight:700;border-bottom:3px solid transparent;cursor:pointer;font-family:inherit;white-space:nowrap}
+  nav.tabs button.active{color:#fff;border-bottom-color:var(--accent)}
+  main{padding:14px 14px 0}
+  section.tab{display:none;animation:fade .2s}
+  section.tab.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1}}
+  h2.sec{font-size:16px;margin:16px 0 9px;display:flex;align-items:center;gap:7px}
+  h2.sec:first-child{margin-top:2px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 14px;margin-bottom:11px}
+  .card h3{margin:0 0 6px;font-size:15px}
+  .muted{color:var(--sub);font-size:13px}
+  .pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;margin:2px 4px 2px 0}
+  .pill.rain{background:rgba(74,168,255,.16);color:var(--rain)}
+  .pill.area{background:rgba(255,176,58,.15);color:var(--accent2)}
+  .pill.warn{background:rgba(255,210,74,.16);color:var(--warn)}
+  .pill.ok{background:rgba(58,210,159,.15);color:var(--ok)}
+  .pill.cat{background:rgba(255,90,60,.16);color:#ff8e76}
+  .pill.dist{background:rgba(58,210,159,.16);color:var(--ok)}
+  .search{width:100%;padding:11px 13px;border-radius:12px;border:1px solid var(--line);background:var(--card2);color:var(--ink);font-size:15px;font-family:inherit}
+  .chips{display:flex;gap:7px;overflow-x:auto;padding:10px 0 4px;scrollbar-width:none}
+  .chips::-webkit-scrollbar{display:none}
+  .chip{flex:0 0 auto;background:var(--card2);border:1px solid var(--line);color:var(--sub);padding:7px 12px;border-radius:20px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit}
+  .chip.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .count{font-size:12px;color:var(--sub);margin:6px 2px 9px}
+  .pcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:11px 12px;margin-bottom:9px;display:flex;justify-content:space-between;align-items:center;gap:9px}
+  .pcard .info{min-width:0;flex:1}
+  .pcard .nm{font-weight:700;font-size:14px}
+  .pcard .tags{margin-top:3px;line-height:1.9}
+  .btns{flex:0 0 auto;display:flex;flex-direction:column;gap:6px}
+  .b{border:none;border-radius:10px;padding:8px 11px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;text-align:center;white-space:nowrap}
+  .b.go{background:var(--ok);color:#08231a}
+  .b.see{background:var(--card2);color:var(--ink);border:1px solid var(--line)}
+  .b.ig{background:linear-gradient(45deg,#feda75,#fa7e1e,#d62976,#962fbf);color:#fff}
+  .igpick{background:var(--card);border:1px solid var(--line);border-left:4px solid #d62976;border-radius:12px;padding:13px 14px;margin-bottom:11px}
+  .igpick .ttl{font-weight:800;font-size:15px;margin-bottom:3px}
+  .igpick .cap{font-size:13.4px;color:#dfe4ec;margin:6px 0}
+  .igpick .lks a{display:inline-block;margin:4px 8px 0 0;font-size:12.5px;font-weight:700}
+  details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:0 14px;margin-bottom:10px}
+  details>summary{padding:13px 0;font-weight:700;cursor:pointer;list-style:none;font-size:14.5px}
+  details>summary::-webkit-details-marker{display:none}
+  details>summary::before{content:"▸ ";color:var(--accent)}
+  details[open]>summary::before{content:"▾ "}
+  details .body{padding:0 0 13px;font-size:13.6px}
+  .body ul{padding-left:18px;margin:6px 0}.body li{margin:4px 0}
+  table.kv{width:100%;border-collapse:collapse;font-size:13.3px;margin:6px 0}
+  table.kv td{border-top:1px solid var(--line);padding:7px 4px;vertical-align:top}
+  table.kv td:first-child{color:var(--sub);width:36%;font-weight:600}
+  .note{background:rgba(255,90,60,.1);border:1px solid rgba(255,90,60,.3);border-radius:11px;padding:10px 12px;font-size:13.2px;margin:10px 0}
+  .note.blue{background:rgba(74,168,255,.1);border-color:rgba(74,168,255,.35)}
+  .note.warnb{background:rgba(255,210,74,.1);border-color:rgba(255,210,74,.4)}
+  .note.okb{background:rgba(58,210,159,.1);border-color:rgba(58,210,159,.35)}
+  .note.pinkb{background:rgba(255,111,174,.1);border-color:rgba(255,111,174,.35)}
+  .note b{color:#fff}
+  .home-hero{background:linear-gradient(135deg,#1d2230,#15181f);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px}
+  .home-hero .big2{font-size:21px;font-weight:800;margin:2px 0}
+  .quick{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:10px 0}
+  .quick a,.quick button{display:block;background:var(--card2);border:1px solid var(--line);color:var(--ink);border-radius:12px;padding:12px;font-size:13.5px;font-weight:700;text-align:center;cursor:pointer;font-family:inherit}
+  .quick a small,.quick button small{display:block;color:var(--sub);font-weight:500;font-size:11px;margin-top:2px}
+  .menu{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:8px 0}
+  .menu button{background:var(--card2);border:1px solid var(--line);color:var(--ink);border-radius:13px;padding:14px 6px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;line-height:1.4}
+  .menu button .e{font-size:21px;display:block;margin-bottom:3px}
+  .tel{color:var(--ok);font-weight:800}
+  #map{height:62vh;min-height:380px;border-radius:14px;border:1px solid var(--line);background:#222}
+  .gpsbar{display:flex;gap:8px;margin:0 0 10px}
+  .gpsbar button{flex:1;background:var(--ok);color:#08231a;border:none;border-radius:11px;padding:11px;font-size:13.5px;font-weight:800;font-family:inherit;cursor:pointer}
+  .gpsbar button.sec{background:var(--card2);color:var(--ink);border:1px solid var(--line)}
+  .leaflet-popup-content{font-family:inherit;font-size:13px}
+  .leaflet-popup-content b{font-size:14px}
+  .lk{color:var(--accent2);font-weight:700}
+  .overlay{display:none;position:fixed;inset:0;z-index:80;background:var(--bg);overflow-y:auto;padding:0 14px 40px}
+  .overlay.on{display:block}
+  .ovhead{position:sticky;top:0;background:var(--bg);padding:12px 0 10px;display:flex;gap:10px;align-items:center;border-bottom:1px solid var(--line);margin-bottom:12px}
+  .backb{background:var(--card2);border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:9px 13px;font-weight:800;font-family:inherit;cursor:pointer;font-size:14px}
+  .dt-title{font-size:21px;font-weight:800;margin:4px 0 8px}
+  .dt-btns{display:flex;gap:8px;margin:14px 0}
+  .dt-btns button{flex:1;border:none;border-radius:12px;padding:13px 6px;font-size:13.5px;font-weight:800;font-family:inherit;cursor:pointer}
+  footer{padding:22px 16px;color:var(--sub);font-size:11.5px;text-align:center}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <h1>🐙 오사카 커플 가이드</h1>
+  <div class="meta">Crystal Court Namba · 6.27(토)–7.1(수) · 오타쿠·패션·카페·맛집 · ☔장마</div>
+</header>
+
+<nav class="tabs" id="tabs">
+  <button data-t="search">🔎 검색</button>
+  <button class="active" data-t="home">🏠 홈</button>
+  <button data-t="plan">📅 일정</button>
+  <button data-t="map">🗺️ 지도</button>
+  <button data-t="places">📍 장소</button>
+  <button data-t="course">💑 코스</button>
+  <button data-t="otaku">🎮 오타쿠</button>
+  <button data-t="fashion">🛍️ 패션</button>
+  <button data-t="cafe">☕ 카페</button>
+  <button data-t="food">🍜 맛집</button>
+  <button data-t="hidden">🌙 숨은곳</button>
+  <button data-t="rain">🌧️ 실내</button>
+  <button data-t="move">🚆 교통</button>
+  <button data-t="coupon">🎟️ 쿠폰</button>
+  <button data-t="tips">💎 꿀팁</button>
+  <button data-t="event">🎉 이벤트</button>
+  <button data-t="jp">🗣️ 일본어</button>
+  <button data-t="check">✅ 준비</button>
+</nav>
+
+<main>
+
+<!-- SEARCH -->
+<section class="tab" id="search">
+  <h2 class="sec">🔎 통합 검색</h2>
+  <input class="search" id="gsearch" placeholder="뭐든 검색: 돈키 쿠폰, 비오는날 카페, 라멘, 가챠, 우메다…">
+  <div class="muted" id="gcount" style="margin:8px 2px">가게 230곳 + 정보를 한 번에 검색 · 결과를 누르면 상세페이지</div>
+  <div id="gresults"></div>
+</section>
+
+<!-- HOME -->
+<section class="tab active" id="home">
+  <div class="home-hero">
+    <div class="muted">머무는 곳</div>
+    <div class="big2">Crystal Court Namba</div>
+    <div class="muted">3-6-17 Nanbanaka, Naniwa-ku · 난카이 난바 도보 약 4분</div>
+    <div class="quick">
+      <button onclick="dir('Crystal Court Namba 오사카',34.6628,135.4985)">🧭 숙소 길찾기<small>현재위치→숙소</small></button>
+      <a href="tel:+817027973640">📞 숙소 전화<small>+81-70-2797-3640</small></a>
+    </div>
+    <div class="note warnb" style="margin-bottom:0"><b>체크인:</b> 셀프(액세스코드) → <b>도착 1일 전 숙소 전화 필수</b>. 체크인 16:00~ / 체크아웃 7/1 10:00.</div>
+  </div>
+
+  <h2 class="sec">⚡ 빠른 메뉴</h2>
+  <div class="menu" id="menu">
+    <button data-go="search"><span class="e">🔎</span>통합검색</button>
+    <button data-go="plan"><span class="e">📅</span>4박 일정</button>
+    <button data-go="map"><span class="e">🗺️</span>지도·내위치</button>
+    <button data-go="otaku"><span class="e">🎮</span>오타쿠·포켓몬</button>
+    <button data-go="fashion"><span class="e">🛍️</span>패션·구제</button>
+    <button data-go="cafe"><span class="e">☕</span>감성카페</button>
+    <button data-go="food"><span class="e">🍜</span>맛집·타베로그</button>
+    <button data-go="hidden"><span class="e">🌙</span>숨은명소</button>
+    <button data-go="course"><span class="e">💑</span>데이트코스</button>
+    <button data-go="coupon"><span class="e">🎟️</span>할인쿠폰</button>
+    <button data-go="move"><span class="e">🚆</span>교통·라피트</button>
+  </div>
+
+  <h2 class="sec">🆘 비상</h2>
+  <div class="quick">
+    <a href="tel:110">🚓 경찰 110</a>
+    <a href="tel:119">🚑 구급 119</a>
+    <a href="tel:+815038162787">🆘 한국어핫라인<small>050-3816-2787</small></a>
+    <a href="tel:+81642562345">🇰🇷 총영사관<small>06-4256-2345</small></a>
+  </div>
+
+  <div class="note blue"><b>✈️ 항공</b> 가는편 6/27 ZE613 ICN15:15→KIX17:00 · 오는편 7/1 ZE614 KIX18:00→ICN19:55 · PNR <b>Z4ZY4V</b></div>
+  <div class="note"><b>🎫 난카이 라피트 왕복 보유</b> — 좌석 예약 미리(트립닷컴 바우처는 1일 전)! QR 제시(스샷❌·다크모드OFF). → 🚆교통 탭</div>
+  <div class="note okb"><b>☔ 장마 한가운데</b>(6/4~7/19경). 우산+얇은우비, 실내 위주. 낮 27~30℃·습도 80~90%.</div>
+
+  <div class="card muted" style="font-size:13px">
+    <b style="color:var(--ink)">쓰는 법</b><br>• 모든 장소 카드의 <b style="color:var(--ok)">🧭 길찾기</b> = 현재 GPS위치→목적지 <b style="color:var(--ink)">구글맵 앱</b>으로 열림.<br>• 출발 전 <b style="color:var(--ink)">구글맵 오사카 오프라인 지도</b> 받으면 데이터 없이 길안내 OK.<br>• <span class="pill rain">☔</span>=실내(비 와도 좋음). 영업시간은 가기 전 구글맵 재확인!
+  </div>
+</section>
+
+<!-- MAP -->
+<section class="tab" id="map">
+  <h2 class="sec">🗺️ 지도 · 내 위치</h2>
+  <div class="gpsbar">
+    <button onclick="locate()">📍 내 위치 잡기</button>
+    <button class="sec" onclick="openMyLoc()">구글맵서 내위치</button>
+  </div>
+  <div id="gpsmsg" class="muted" style="margin:-4px 0 9px"></div>
+  <div id="map"></div>
+  <div class="note blue" style="margin-top:11px"><b>지도 배경은 인터넷 필요</b>(와이파이/데이터). 오프라인이면 핀 대신 <b>📍장소 탭의 🧭길찾기</b>를 쓰세요 — 구글맵 앱(오프라인 지도)으로 안내됩니다. GPS(내 위치)는 데이터 없이도 작동.</div>
+  <div class="muted" style="margin-top:6px">핀 색: <span style="color:#ff8e76">●</span>오타쿠 <span style="color:#ffb03a">●</span>맛집/카페 <span style="color:#4aa8ff">●</span>관광/쇼핑 <span style="color:#3ad29f">●</span>거점 <span style="color:#ff6fae">●</span>먼곳</div>
+</section>
+
+<!-- PLACES -->
+<section class="tab" id="places">
+  <h2 class="sec">📍 내 구글맵 리스트 (100+)</h2>
+  <div class="gpsbar"><button onclick="locate()">📍 내 위치 잡고 가까운 순</button></div>
+  <input class="search" id="psearch" placeholder="🔎 검색 (라멘, 가챠, 우메다…)">
+  <div class="chips" id="pchips"></div>
+  <div class="count" id="pcount"></div>
+  <div id="plist"></div>
+</section>
+
+<!-- COURSE -->
+<section class="tab" id="course">
+  <h2 class="sec">💑 데이트 코스 · 가는 길 볼거리</h2>
+  <div class="note pinkb">전부 난바 도보권 위주! 비 오면 <b>코스E(실내)</b>로. 야경·관람차·크루즈는 <b>오사카 어메이징 패스</b>(1일 ¥3,500)면 무료라 2인 본전 ↑.</div>
+
+  <details open><summary>🌃 코스A — 난바·도톤보리 야경 (반나절·저녁)</summary><div class="body">
+    16:30 난바워크(지하 워밍업) → 17:00 <b>호젠지 요코초</b>(이끼불상 골목) → 17:30 <b>도톤보리·글리코사인</b>(점등 대기) → 18:30 <b>톤보리 리버크루즈</b>(¥1,500/패스무료) → 19:00 저녁(오코노미야키/철판) → 20:30 <b>에비스타워 관람차</b>(돈키 3F, ¥600).
+    <div class="muted" style="margin-top:6px">비 와도: 크루즈 지붕有·관람차 실내. 식사는 난바파크스/지하로.</div>
+  </div></details>
+
+  <details><summary>🛍️ 코스B — 신사이바시·아메무라 쇼핑+카페 (낮)</summary><div class="body">
+    11:00 <b>신사이바시스지</b>(아케이드, 비무관) → 12:30 점심+커피 → 13:30 <b>아메무라·삼각공원</b>(빈티지·레코드) → 15:00 <b>호리에 오렌지스트리트</b>(셀렉트샵·감성카페) → 16:30 디저트 마무리. (패션 상세 → 🛍️패션 탭)
+  </div></details>
+
+  <details><summary>🌆 코스C — 우메다 야경+쇼핑 (오후~밤)</summary><div class="body">
+    난바→우메다 미도스지선 약 8분. 15:00 <b>그랜드그린오사카</b>(신상) → 16:00 루쿠아/그랜드프론트 쇼핑 → 17:30 <b>HEP FIVE 빨간 관람차</b>(¥600, 2026.4 재개장) → 18:30 타키미코지 레트로 식당가 → 20:00 <b>우메다 스카이빌딩 공중정원</b>(¥2,000/패스무료, 일몰~야경 ⭐).
+  </div></details>
+
+  <details><summary>🎮 코스D — 오타쿠 성지 (반나절)</summary><div class="body">
+    13:00 <b>덴덴타운/오타로드</b> → 죠신·애니메이트·만다라케·스루가야 → 카드샵(하레루야2/드래곤스타) → <b>라운드원/타이토에서 포켓몬 프렌다+인형뽑기</b> → 저녁 신세카이·츠텐카쿠 쿠시카츠. (상세 → 🎮오타쿠 탭)
+  </div></details>
+
+  <details><summary>☔ 코스E — 비 오는 날 100% 실내 (하루)</summary><div class="body">
+    10:30 <b>난바파크스</b>(영화·로프트) → 12:00 <b>라운드원 스포차</b>(3h ¥3,000, 50종 무제한) → 15:00 <b>프리쿠라+오락실</b> → 16:30 신사이바시 아케이드 → 18:30 <b>소라니와 온천</b> 또는 디너. 대체: 카이유칸·우메다스카이·컵누들뮤지엄.
+  </div></details>
+
+  <h2 class="sec">🧭 가는 길에 볼만한 것 (en-route)</h2>
+  <div class="note">동선에서 도보 5~10분 detour만! 너무 멀면 제외.</div>
+  <details><summary>난바 → 우메다 (미도스지선)</summary><div class="body"><ul>
+    <li><b>신사이바시역</b> 하차: 신사이바시스지·아메무라·삼각공원</li>
+    <li><b>혼마치</b>: 미도스지 가로수길(가을 라이트업), 센바</li>
+    <li><b>요도야바시/기타하마</b>: 나카노시마 강변·레트로 리버뷰 카페</li></ul></div></details>
+  <details><summary>난바 → 카이유칸 (베이)</summary><div class="body"><ul>
+    <li><b>덴포잔 대관람차</b>(112.5m, 야간 라이트업, 투명바닥)</li>
+    <li><b>나니와쿠이신보요코초</b>(레트로 먹거리골목)·레고랜드·산타마리아호</li></ul></div></details>
+  <details><summary>난바 → USJ / 나라</summary><div class="body"><ul>
+    <li>USJ: 신이마미야 환승 시 <b>신세카이·츠텐카쿠</b> 잠깐</li>
+    <li>나라(긴테쓰 약 40분): 도중 <b>쓰루하시 코리아타운</b>(야키니쿠 점심)</li></ul></div></details>
+
+  <h2 class="sec">🌃 야경 / 📷 포토 스팟</h2>
+  <table class="kv">
+    <tr><td>우메다 스카이빌딩</td><td>173m 360도, ¥2,000(패스무료) ⭐⭐⭐⭐⭐</td></tr>
+    <tr><td>HEP FIVE 관람차</td><td>¥600, 캡슐(에어컨) · 2026.4 재개장</td></tr>
+    <tr><td>에비스타워(돈키 관람차)</td><td>¥600, 도톤보리 한복판 야경</td></tr>
+    <tr><td>톤보리 리버크루즈</td><td>¥1,500(패스무료), 19시~ 야경 ⭐</td></tr>
+    <tr><td>아베노하루카스 300</td><td>일본최고층, 통유리, 약 ¥2,000</td></tr>
+    <tr><td>글리코사인 명당</td><td>①에비스다리(정면) ②강변 계단(한산·숨은명당) ③리버워크(반영샷). 점등 일몰30분후~24시</td></tr>
+  </table>
+  <div class="muted">+ 삼각공원(그래피티)·호리에 골목·호젠지(등불)·그랜드그린오사카(잔디)</div>
+
+  <h2 class="sec">🎡 체험 데이트</h2>
+  <div class="muted">프리쿠라(¥400~)·라운드원 스포차·동물카페(부엉이/마이크로피그)·방탈출·커플링 공방·소라니와 온천(유카타)·리버크루즈. 자세히는 🎮오타쿠/🌙숨은곳 탭.</div>
+</section>
+
+<!-- PLAN -->
+<section class="tab" id="plan">
+  <h2 class="sec">📅 4박 추천 일정 (6.27–7.1)</h2>
+  <div class="note pinkb">커플 맞춤(오타쿠·패션·카페·맛집) + 장마 대비. 각 날 <b>☀️맑음 / ☔비</b> 옵션 병기. 순서·장소는 자유롭게 바꿔도 OK! 상세는 💑코스·각 탭에서.</div>
+
+  <details open><summary>✈️ Day 0 · 6/27(토) 도착 — 도톤보리 야경</summary><div class="body"><ul>
+    <li>17:00 KIX 도착 → 입국·수하물 → <b>라피트</b>(미리 예약) → 난바 ~18:30</li>
+    <li>숙소 체크인(전날 전화 필수) → 짐 풀기</li>
+    <li>🌙 <b>도톤보리·글리코사인</b> 야경 산책 → 551 부타만/타코야키/오코노미야키 가볍게</li>
+    <li>밤 <b>에비스타워 관람차</b> or 돈키 도톤보리 24시 쇼핑</li>
+    <li>☔비: 난바워크 지하 + 라운드원/게임센터</li>
+  </ul></div></details>
+
+  <details><summary>🎮 Day 1 · 6/28(일) 난바·미나미 — 오타쿠 + 미식</summary><div class="body"><ul>
+    <li>오전 <b>구로몬 시장</b>(일찍, 신선) → 카페</li>
+    <li>낮 <b>덴덴타운/오타로드</b> — 애니메이트·만다라케·스루가야·카드샵(하레루야2) → <b>포켓몬 프렌다·인형뽑기</b>(라운드원/타이토)</li>
+    <li>오후 <b>신사이바시스지·아메무라</b>(구제·셀렉트) + 감성카페(LiLo)</li>
+    <li>저녁 <b>우라난바 이자카야/다치노미</b>(츠마미구이 등) or 쿠시카츠</li>
+    <li>☔비: 전부 아케이드·실내라 그대로 OK</li>
+  </ul></div></details>
+
+  <details><summary>🛍️ Day 2 · 6/29(월) 우메다·나카자키초 — 패션 + 감성 + 야경</summary><div class="body"><ul>
+    <li>오전 <b>나카자키초</b> 골목 카페·구제(타이요노토·Pathfinder·green pepe)</li>
+    <li>낮 <b>우메다</b> — 포켓몬센터·닌텐도(LUCUA SOUTH 13F)·HEP·그랜드프론트·한큐 / 점심 우메다 14선</li>
+    <li>오후 백화점 데파치카(한신 이카야키) + 여름세일 쇼핑</li>
+    <li>🌙 <b>우메다 스카이빌딩 공중정원</b> 야경 ⭐ (또는 HEP 관람차)</li>
+    <li>☔비: 우메다 거대 지하상가로 거의 안 젖고 이동</li>
+  </ul></div></details>
+
+  <details><summary>🎢 Day 3 · 6/30(화) 선택 데이 (날씨 따라)</summary><div class="body">
+    <p><b>☀️ 맑으면:</b> USJ(약 20분) <b>또는</b> 나라 당일(사슴, 약 45분, 가는 길 쓰루하시 야키니쿠)</p>
+    <p><b>☔ 비 오면:</b> 베이 — <b>카이유칸 수족관 + 덴포잔 대관람차</b> → 저녁 <b>소라니와 온천</b>(유카타 데이트) / 또는 라운드원 스포차 종일</p>
+    <p class="muted">+ 6/30 <b>스미요시타이샤</b> 여름 정화의식(16:00) 관심 있으면. 교세라돔 콘서트로 주변 혼잡할 수도.</p>
+  </div></details>
+
+  <details><summary>🧳 Day 4 · 7/1(수) 귀국</summary><div class="body"><ul>
+    <li>10:00 체크아웃 → <b>짐 호텔 보관</b></li>
+    <li>오전 막판 쇼핑(돈키 면세 몰아결제·구로몬·드럭스토어)</li>
+    <li>14:00 짐 회수 → <b>14:30~15:00 라피트</b> → KIX 15:15~30</li>
+    <li>18:00 ZE614 출발 (국제선 보안 2시간 여유)</li>
+  </ul></div></details>
+
+  <div class="note blue">💡 비 예보 체크 후 Day2·Day3를 서로 바꾸면 야외(USJ/나라)를 맑은 날에 배치 가능!</div>
+</section>
+
+<!-- card-list tabs -->
+<section class="tab" id="otaku">
+  <h2 class="sec">🎮 오타쿠 · 포켓몬 · 게임</h2>
+  <div class="note pinkb"><b>"게임팩 가챠" = 포켓몬 프렌다(FRIENDA)</b> — 직접 배틀하고 카드 배출. <b>라운드원 센니치마에</b>(확인)·GiGO 도톤보리·타이토 난바. 100엔+픽당 100엔(최대 600엔). 설치점: pokemonfrienda.com/shop</div>
+  <div class="note warnb"><b>2026.4 이전:</b> 포켓몬센터·닌텐도 오사카 = <b>LUCUA SOUTH 13F</b>(우메다). 포켓몬센터 DX+카페 = 다이마루 신사이바시 9F(난바서 더 가까움).</div>
+  <details open><summary>🗺️ 3대 클러스터로 외우기</summary><div class="body"><ul>
+    <li><b>오타로드/덴덴타운</b>(닛폰바시): 카드·피규어·동인·중고 본진</li>
+    <li><b>다이마루 신사이바시 9F</b>: 포켓몬DX+카페·커비카페·점프샵·카이요도</li>
+    <li><b>신사이바시 PARCO 6F</b>: 캡콤·치이카와·지브리·고질라·POP MART</li>
+    <li><b>우메다</b>: LUCUA SOUTH 13F(포켓몬·닌텐도) / HEP(쿠지8F·가샤폰9F·산리오·점프샵) / 차야마치(가챠 7천대+)</li></ul></div></details>
+  <details><summary>🎴 포켓몬 카드 살 곳 (목적별)</summary><div class="body"><ul>
+    <li><b>봉인·싱글:</b> 하레루야2 난바(영어친절), 드래곤스타, 카드랩, GIRAFULL</li>
+    <li><b>빈티지/구판:</b> 닌닌, 만다라케, 스루가야</li>
+    <li><b>팔기(매입):</b> 카드랩 매입센터 난바, 닌닌, 드래곤스타</li>
+    <li>봉인팩은 편의점(보통 1인 2팩)·포켓몬센터도. 신상: 아비스아이(5월)/스톰에메랄다=메가레쿠쟈(7.31, 핫)</li></ul></div></details>
+  <details><summary>💗 여성향(오토메·BL) 동선</summary><div class="body">K-Books 난바 일번관 → 스루가야 오토메관 → 토라노아나×스루가야 오토메동인지관(10만점) → 애니메이트 닛폰바시 → 라신반(여성향). 만다라케 5F도 여성향·남성아이돌.</div></details>
+  <details><summary>🪝 뽑기/프리쿠라 꿀팁</summary><div class="body"><ul>
+    <li>크레인은 <b>GiGO·라운드원·세가</b>가 잘 뽑힘. 들기보다 출구로 밀기. 직원 호출하면 위치 재배치 해줌</li>
+    <li>프리쿠라 커플 추천 기종: <b>MONOCH</b>(분위기·남자 잘나옴), <b>97%</b>(내추럴). 보정 "Natural"로</li>
+    <li>타이토 난바 6F: 무료 코스프레 대여+프리쿠라</li></ul></div></details>
+  <h3 style="font-size:14px;margin:14px 2px 4px">🏬 매장 리스트 (탭하면 길찾기)</h3>
+  <div id="otakuList"></div>
+</section>
+
+<section class="tab" id="fashion">
+  <h2 class="sec">🛍️ 패션 · 구제 · 쇼핑</h2>
+  <div class="note pinkb">커플룩 팁: 톤 맞추기(아메무라=스트릿/빈티지, 호리에=깔끔셀렉트). 대부분 역세권 실내라 장마 OK(아메무라 거리만 야외).</div>
+  <details open><summary>🧭 지역별 한눈에</summary><div class="body"><ul>
+    <li><b>아메리카무라(아메무라):</b> 오사카 스트리트·구제 본진(KINJI·古着JAM·2nd STREET·BIG STEP)</li>
+    <li><b>신사이바시:</b> GU 1호 플래그십·UNIQLO·WEGO 일본최대·PARCO·다이마루</li>
+    <li><b>호리에(오렌지스트리트):</b> 가로수길 감성, 셀렉트샵+카페(BIOTOP·Kitsune)</li>
+    <li><b>우메다:</b> LUCUA·그랜드프론트·NU차야마치·HEP·한큐멘즈·UNIQLO 신플래그십</li></ul></div></details>
+  <div class="note warnb">⚠️ 포켓몬센터·점프샵·닌텐도는 <b>다이마루(PARCO 아님)</b>. 면세는 2026.11.1부터 "공항 환급"으로 바뀜 — 이번(6월) 여행은 <b>매장 즉시 면세</b>.</div>
+  <h3 style="font-size:14px;margin:14px 2px 4px">🏬 매장 리스트</h3>
+  <div id="fashionList"></div>
+</section>
+
+<section class="tab" id="cafe">
+  <h2 class="sec">☕ 감성 카페 · 타베로그 고점</h2>
+  <div class="note blue"><b>나카자키초(中崎町)</b> = 우메다 옆 골목 감성 끝판왕(구옥 카페·구제). 신사이바시 아케이드 카페는 비 와도 OK.</div>
+
+  <h2 class="sec">📸 인스타 감성 PICK</h2>
+  <div class="note pinkb" style="margin-top:0">사진은 못 박지만(인스타가 막아둠) — <b>📷 인스타</b> 누르면 그 가게 <b>실제 피드·사진</b>이 바로 떠요. 비주얼 보고 가세요!</div>
+
+  <div class="igpick">
+    <div class="ttl">🍓 旬゛喫茶 후츠우니후루우츠 <span class="pill area">호리에</span></div>
+    <div class="cap">외관부터 산도 비주얼까지 다 취저… 알록달록 <b>후르츠 산도에 크림치즈</b>가 들어가 안 물리고 진짜 맛있음. 1층 베이커리 빵 포장해서 같이 먹기 OK. <b>⭑ 계단샷 꼭 찍기 📸⭑</b></div>
+    <div class="lks"><a href="https://www.instagram.com/explore/search/keyword/?q=%E6%97%AC%E5%96%AB%E8%8C%B6%20%E3%83%95%E3%83%84%E3%82%A6%E3%83%8B%E3%83%95%E3%83%AB%E3%82%A6%E3%83%84">📷 인스타</a><a href="https://www.google.com/maps/dir/?api=1&destination=%E6%97%AC%E5%96%AB%E8%8C%B6%20%E3%83%95%E3%83%84%E3%82%A6%E3%83%8B%E3%83%95%E3%83%AB%E3%82%A6%E3%83%84%20%E5%A4%A7%E9%98%AA&travelmode=walking">🧭 길찾기</a></div>
+  </div>
+
+  <div class="igpick">
+    <div class="ttl">🍮 킷사 도레미 (喫茶ドレミ) <span class="pill area">신세카이</span></div>
+    <div class="cap">만화책에서 보던 <b>90년대 일본 감성 그대로</b>… 가게 앞 모형 그대로 나오는 <b>과일 푸딩 & 파르페</b>가 시그니처. 탱글한 푸딩+가득 생크림+신선 과일 조합이 미침. "찐 레트로" 느끼고 싶으면 여기. <span class="muted">수~일 10–18시(월·화 휴무)</span></div>
+    <div class="lks"><a href="https://www.instagram.com/explore/search/keyword/?q=%E5%96%AB%E8%8C%B6%E3%83%89%E3%83%AC%E3%83%9F%20%E5%A4%A7%E9%98%AA">📷 인스타</a><a href="https://www.google.com/maps/dir/?api=1&destination=%E5%96%AB%E8%8C%B6%E3%83%89%E3%83%AC%E3%83%9F%20%E6%96%B0%E4%B8%96%E7%95%8C&travelmode=walking">🧭 길찾기</a></div>
+  </div>
+
+  <div class="igpick">
+    <div class="ttl">🌈 Pathfinder XNOBU <span class="pill area">나카자키초</span></div>
+    <div class="cap">라떼아트 세계대회 <b>2회 우승</b> 바리스타의 가게. <b>레인보우 라떼</b> 비주얼 끝판왕, 나카자키초 골목 감성과 찰떡. 커피러버 커플 인생샷.</div>
+    <div class="lks"><a href="https://www.instagram.com/explore/search/keyword/?q=pathfinder%20xnobu%20osaka">📷 인스타</a><a href="https://www.google.com/maps/dir/?api=1&destination=Pathfinder%20XNOBU%20%E5%A4%A7%E9%98%AA&travelmode=walking">🧭 길찾기</a></div>
+  </div>
+
+  <div class="igpick">
+    <div class="ttl">🌞 Cafe 타이요노토 (태양의 탑) <span class="pill area">나카자키초</span></div>
+    <div class="cap">나카자키초 카페 문화의 <b>원조 격</b>. 빈티지 잡화 가득한 구옥 공간에 <b>크림소다·스콘</b>. 밤 22시까지라 저녁 데이트도 OK.</div>
+    <div class="lks"><a href="https://www.instagram.com/explore/search/keyword/?q=%E5%A4%AA%E9%99%BD%E3%83%8E%E5%A1%94%20%E4%B8%AD%E5%B4%8E%E7%94%BA">📷 인스타</a><a href="https://www.google.com/maps/dir/?api=1&destination=%E5%A4%AA%E9%99%BD%E3%83%8E%E5%A1%94%20%E4%B8%AD%E5%B4%8E%E7%94%BA&travelmode=walking">🧭 길찾기</a></div>
+  </div>
+
+  <div class="igpick">
+    <div class="ttl">🍨 파페테리아 팔 (パフェテリアパル) <span class="pill area">신사이바시</span></div>
+    <div class="cap">홋카이도발 <b>'시메(마무리) 파르페'</b> 문화. 계절마다 바뀌는 예술 파르페 + 야간 바 무드라 분위기 200%. 저녁~심야 데이트 강추.</div>
+    <div class="lks"><a href="https://www.instagram.com/explore/search/keyword/?q=%E3%83%91%E3%83%95%E3%82%A7%E3%83%86%E3%83%AA%E3%82%A2%E3%83%91%E3%83%AB%20%E5%BF%83%E6%96%8E%E6%A9%8B">📷 인스타</a><a href="https://www.google.com/maps/dir/?api=1&destination=%E3%83%91%E3%83%95%E3%82%A7%E3%83%86%E3%83%AA%E3%82%A2%E3%83%91%E3%83%AB%20%E5%BF%83%E6%96%8E%E6%A9%8B&travelmode=walking">🧭 길찾기</a></div>
+  </div>
+
+  <div class="igpick">
+    <div class="ttl">☕ LiLo Coffee Roasters <span class="pill area">아메무라</span></div>
+    <div class="cap">아메무라 커피 <b>성지</b>. 힙한 인더스트리얼 공간 + 컬러풀 원두 라인업, <b>23시까지</b>라 밤에도. 신사이바시·아메무라 쇼핑하다 한 잔.</div>
+    <div class="lks"><a href="https://www.instagram.com/lilocoffee">📷 인스타</a><a href="https://www.google.com/maps/dir/?api=1&destination=LiLo%20Coffee%20Roasters%20%E5%A4%A7%E9%98%AA&travelmode=walking">🧭 길찾기</a></div>
+  </div>
+
+  <h2 class="sec">☕ 카페 전체 리스트</h2>
+  <div id="cafeList"></div>
+</section>
+
+<section class="tab" id="food">
+  <h2 class="sec">🍜 맛집 · 타베로그 · 우메다 점심</h2>
+  <div class="note okb"><b>타베로그 점수:</b> 일본은 짜게 줌 → <b>3.5+ 명점 / 3.7+ 최상급 / 4.0+ 극히 드묾</b>. 줄 긴 곳은 오픈런 or 오후 3~4시.</div>
+  <details open><summary>🐙 오사카 명물 빨리보기</summary><div class="body">타코야키·오코노미야키·쿠시카츠(소스 두번찍기 금지)·551 부타만·키츠네우동·이카야키(한신 데파치카). 이치란은 본관 폐점→남관.</div></details>
+  <div class="chips" id="foodchips"></div>
+  <div id="foodList"></div>
+</section>
+
+<section class="tab" id="hidden">
+  <h2 class="sec">🌙 숨은 명소 · 로컬 딥</h2>
+  <div class="note pinkb">관광객 적은 진짜 로컬! 텐마(술집골목)·후쿠시마·키타신치·신세카이 뒷골목·쓰루하시·리스닝바·사우나. 나카자키초 카페는 ☕카페 탭.</div>
+  <div id="hiddenList"></div>
+</section>
+
+<section class="tab" id="rain">
+  <h2 class="sec">🌧️ 비 오는 날 / 실내</h2>
+  <div class="note blue">난바↔우메다 미도스지선 8분, 지하도로 거의 안 젖음. 아래는 실내 추천 + 전체 실내장소는 <b>📍장소 탭 ☔실내 필터</b>.</div>
+  <details open><summary>🏯 비 와도 좋은 실내</summary><div class="body"><table class="kv">
+    <tr><td>가이유칸 해유관</td><td>10–20시, 평일¥2,400~ 세계최대급 수족관</td></tr>
+    <tr><td>우메다 스카이빌딩</td><td>9:30–22:30, ¥2,000</td></tr>
+    <tr><td>난바파크스/난바워크</td><td>무료, 난카이 직결·지하상가</td></tr>
+    <tr><td>나카노시마 미술관 3관</td><td>국립국제·나카노시마·과학관 도보권(¥430~)</td></tr>
+    <tr><td>라운드원 스포차</td><td>3h ¥3,000, 50종</td></tr>
+    <tr><td>소라니와 온천</td><td>유카타 온천 데이트</td></tr>
+  </table></div></details>
+  <details><summary>☂️ 우산 어디서</summary><div class="body">다이소 ¥330~ / 편의점 ¥500~ / 돈키 24시간. 호텔 무료대여 확인.</div></details>
+  <details><summary>🛍️ 지붕있는 쇼핑(비무관)</summary><div class="body">신사이바시스지 아케이드 600m · 돈키 도톤보리(24h, <b>6/30 화 13시 개시</b>) · 다카시마야(난바역 직결) · 우메다 지하상가.</div></details>
+</section>
+
+<!-- MOVE -->
+<section class="tab" id="move">
+  <h2 class="sec">🚆 교통</h2>
+  <details open><summary>🎫 난카이 라피트 (공항↔난바 왕복 보유)</summary><div class="body"><ul>
+    <li>좌석 예약: 바우처 링크(트립닷컴 규정=1일 전). 당일·일본시간 02~04시 예약 불가</li>
+    <li>탑승: <b>QR 제시</b>(스샷❌·다크모드 OFF)</li>
+    <li>KIX↔난바 약 34~40분(30분 간격). 종점 <b>난카이 난바 3층 9번홈 = 숙소 도보 4분</b>. KIX 출발홈은 전광판</li>
+    <li>α=논스톱 / β=신이마미야·텐가차야 정차(둘 다 난바행)</li></ul>
+    <div class="note warnb" style="margin:6px 0 0">출발 전 <b>가는편·오는편 좌석 모두</b> 예약! 오는편은 비행기시간 역산.</div></div></details>
+  <details><summary>🛬 도착(6/27) / 🛫 귀국(7/1) 동선</summary><div class="body">
+    <p><b>도착:</b> KIX 17:00→입국·수하물 ~17:45→라피트→난바 ~18:30. ※전날 숙소 전화.</p>
+    <p><b>귀국:</b> 체크아웃 10:00→짐 호텔보관→관광→14:30~15:00 라피트→KIX 15:15~30(출발 2.5h 전). 국제선 체크인·보안 2h.</p></div></details>
+  <details><summary>💳 ICOCA / 교통카드</summary><div class="body"><ul>
+    <li>단기엔 패스보다 IC카드. 실물 ICOCA ¥2,000(보증금¥500)</li>
+    <li><b>아이폰:</b> 모바일 Suica 또는 Welcome Suica(일본 애플ID 불필요·해외카드 충전). 모바일 ICOCA는 한국 애플ID 호환 불확실</li>
+    <li><b>안드로이드(한국폰):</b> 추가 불가 → 공항서 <b>실물 ICOCA</b></li></ul></div></details>
+  <details><summary>🚇 지하철 · 도보</summary><div class="body"><table class="kv">
+    <tr><td>난바↔우메다</td><td>미도스지선 약 8분, IC ¥230</td></tr>
+    <tr><td>난바↔신사이바시</td><td>1정거장(도보 10분도)</td></tr>
+    <tr><td>난카이난바↔도톤보리</td><td>도보 3~10분</td></tr>
+    <tr><td>숙소↔도톤보리</td><td>도보 13~15분</td></tr>
+    <tr><td>신사이바시↔덴덴타운</td><td>지하철 4분(여기만 전철이 나음)</td></tr></table>
+    <p class="muted"><b>패스:</b> 어메이징패스 1일 ¥3,500/2일 ¥5,000(지하철·버스+40개 시설 무료) — 유료명소 2곳+ 도는 날만. 엔조이에코카드 주말 ¥620.</p></div></details>
+  <details><summary>🧳 짐 보관</summary><div class="body"><ul>
+    <li><b>호텔 무료 보관</b>이 정답(도착·귀국일)</li>
+    <li>난카이 난바 코인로커: 소~¥400/중~¥500/대¥600~700/특대~¥1,000. 특대는 오전에</li>
+    <li>백업: ecbo cloak(예약), Bounce. 야마토 택배는 익일배송이라 당일출국 부적합</li></ul></div></details>
+  <div class="note">📱 출발 전: 구글맵 오사카 오프라인 + 파파고/구글번역 오프라인팩 + Japan Transit/NAVITIME. eSIM 소용량 하나 추천(대중교통 실시간은 인터넷 필요).</div>
+</section>
+
+<!-- COUPON -->
+<section class="tab" id="coupon">
+  <h2 class="sec">🎟️ 할인 쿠폰 (받는 법)</h2>
+  <div class="note warnb">프로모션 코드·할인율은 수시 변동! <b>결제 직전 공식 쿠폰페이지·앱 쿠폰함에서 재확인.</b> 매장할인은 <b>여권 실물 + 결제 전 제시</b>.</div>
+
+  <details open><summary>🛒 돈키호테 · 빅카메라 · GU (바로 쓰는 실전)</summary><div class="body">
+    <p><b>🟣 돈키호테</b> 면세10% + 추가(세전 1만엔↑ 5%/3만엔↑ 7%). 계산대에 쿠폰 화면+여권. <br>→ <a class="lk" href="https://japanportal.donki-global.com/coupon/?ptcd=0189000104" target="_blank">돈키 쿠폰 열기(탭)</a> (한 단말 1회 → 재사용은 다른 브라우저/동행 폰)</p>
+    <p><b>🔴 빅카메라</b> 면세10% + 가전 7%/화장품 5% (최대 ~17%). 계산대 바코드+여권. 유효 ~2026.10.31, 전국. (Q-Japan/LIVE JAPAN에서 라이브 쿠폰)</p>
+    <p><b>👕 GU</b> 공식앱 설치(한국서 미리) → 가입 즉시 <b>¥1,000 할인쿠폰</b>(일정금액↑). 매장서 면세10%+카카오페이 결제. 줄서기 전 앱 깔기!</p>
+    <p class="muted">에디온·야마다(LABI 난바)도 면세+7% ~17%. 요도바시는 추가쿠폰 없음(면세만). 드럭스토어는 웰시아·코쿠민이 +8%로 최상.</p>
+  </div></details>
+
+  <details><summary>💰 돈키 "분할결제" 꿀팁 (17% 쿠폰보다 더!)</summary><div class="body">
+    <p>17% 쿠폰만 쓰지 말고 <b>결제를 쪼개서</b> 페이 앱 즉시할인을 각각 받으세요 👏</p>
+    <ul>
+      <li>1️⃣ <b>카카오페이</b> 결제 → 최대 <b>2,000엔</b> 즉시할인</li>
+      <li>2️⃣ <b>네이버페이(Alipay+)</b> 결제 → 최대 <b>2,000엔</b> 즉시할인</li>
+      <li>👉 4,000엔어치를 카카오·네이버로 <b>나눠 결제</b>하면 쿠폰보다 이득. <b>면세까지 같이 적용</b>!</li>
+    </ul>
+    <div class="note warnb" style="margin:6px 0 0">⚠️ 이 즉시할인은 <b>기간·한도 변동 이벤트</b>예요. 출발 전·결제 전 <b>카카오페이/네이버페이 앱의 "일본/해외 이벤트" 탭에서 현재 프로모션·최소금액을 꼭 확인</b>하세요. (계산대서 "별도 결제(分けて)" 요청 → 各 ¥2,000 이상 채우기)</div>
+  </div></details>
+
+  <details><summary>📱 카카오페이로 쿠폰 받기 (GU·로프트·스시로·마츠키요…)</summary><div class="body">
+    <p>면세 매장 외에도 <b>카카오페이 앱 안에 일본 쿠폰이 잔뜩</b> 있어요 — GU·로프트·스시로·마츠모토키요시·마츠야 등.</p>
+    <ul>
+      <li>1) <b>카카오페이</b> 앱(또는 카톡 내 카카오페이) 열기</li>
+      <li>2) 검색창에 <b>가게명</b>(예: GU) 검색 → 쿠폰 클릭</li>
+      <li>3) <b>"지금 받기" → "사용하기" → "이용 방법"</b> 터치</li>
+      <li>4) 자동으로 <b>알리페이(=해외판 카카오페이) 결제 바코드</b>로 이동 → 계산대에 제시</li>
+      <li>※ 카카오페이에 잔액 있으면 별도 설정 불필요. 알리페이=카카오페이 동일</li>
+    </ul>
+    <p class="muted">💡 돈키 쿠폰이 "만료"로 뜨면 → 구글에 <b>"donki global"</b> 검색 → 공식홈 배너의 쿠폰 사용.</p>
+    <p>📋 한국 큐레이터 <b>@choirim_japan</b> 쿠폰 모음집(빅카메라·다이코쿠/삿포로 드럭·EDION·야마다덴키·긴테츠/롯데백화점·AOKI 등): <a class="lk" href="https://app.notion.com/p/38440a914ac880048963f695e3f2a2d6" target="_blank">📒 노션 모음집 열기</a></p>
+    <div class="note warnb" style="margin:6px 0 0">모든 쿠폰은 <b>사용조건(최소금액 등)</b>이 있어요. <b>면세되는 곳은 면세 + 쿠폰 중복</b> 꼭 같이 챙기기!</div>
+  </div></details>
+
+  <details><summary>🎢 클룩·KKday·와그 (티켓·USJ·eSIM)</summary><div class="body"><ul>
+    <li><b>클룩:</b> 앱 첫구매 <code>BETTERONAPP</code> 5%, 일본 어트랙션 코드. 쿠폰존: klook.com/ko/deals (한국 IP/앱)</li>
+    <li><b>KKday:</b> 신규 <code>WELCOME1</code>, eSIM <code>WELCOME7</code>. event.kkday.com/ko/event/monthly-coupon</li>
+    <li><b>와그:</b> 가입 시 2만원 쿠폰팩(오사카 메트로패스·택시 강점)</li>
+    <li>스태킹: 신규쿠폰 → 금액코드(예약당 1개) → 포인트 → 카드사 할인</li>
+    <li>코드 만료 시: "클룩 할인코드 [이번달]" 검색 + 공식 쿠폰존 + 앱 쿠폰함</li></ul></div></details>
+
+  <details><summary>💳 "카카오 쿠폰"의 진실 + 결제카드</summary><div class="body"><ul>
+    <li>일본 현지용 "카카오 할인쿠폰"은 <b>없음</b>. 실제 유용한 건 ↓</li>
+    <li><b>카카오페이(QR):</b> Alipay+/PayPay 가맹점서 결제(편의점·드럭·식당 넓음). 앱 [결제하기]→바코드 제시</li>
+    <li><b>카카오T:</b> 일본 택시(GO) 호출, [여행]탭. 카드 자동결제</li>
+    <li><b>트래블월렛/트래블로그:</b> 엔화 환전·해외결제 수수료 0%. ATM 무료(월렛=이온, 로그=세븐)</li>
+    <li><b>토스뱅크:</b> 일본결제 캐시백(7월부터 2%). ATM "원화로?"→무조건 <b>엔화</b></li>
+    <li>WOWPASS는 한국인 사용 불가</li></ul></div></details>
+
+  <details><summary>🧾 면세 (2026.6 기준)</summary><div class="body"><ul>
+    <li>같은 매장·같은 날 세전 <b>¥5,000↑</b> → 면세. 여권 실물 필수</li>
+    <li>이번 여행: <b>매장 즉시 면세</b>(공항 환급제는 2026.11.1부터)</li>
+    <li>스태킹 순서: 쿠폰 제시 → 면세10% → 면세금액에 쿠폰% → 큰 매장은 TAX-FREE 카운터</li>
+    <li>⚠️ 게임기·게임소프트는 추가쿠폰 제외(면세만). 곤약젤리는 파우치형만 반입(위탁수하물)</li></ul></div></details>
+</section>
+
+<!-- TIPS -->
+<section class="tab" id="tips">
+  <h2 class="sec">💎 현지 꿀팁</h2>
+  <details open><summary>💰 돈 아끼기 (쇼핑 동선)</summary><div class="body"><ul>
+    <li><b>첫날 눈도장 → 마지막날 한 매장 5,500엔↑ 몰아결제 면세</b>가 정석</li>
+    <li>과자·음료 대량은 <b>슈퍼(타마데 24시간 초저가/프레스코)</b>가 드럭·돈키보다 쌈</li>
+    <li>약·화장품=드럭스토어/돈키, 잡템 종합=돈키, 100엔숍=세리아(퀄리티)</li>
+    <li>돈키도 지점마다 가격 다름(도톤보리 메인은 비쌈)</li></ul></div></details>
+  <details><summary>💊 드럭스토어 한국인 필수템</summary><div class="body">동전파스(¥698)·휴족시간(¥698)·샤론파스·카베진α·EVE 진통제·메구리즘 안대·fino 헤어팩·사카무케아·곤약젤리(파우치형). Payke 앱(바코드→한국어 설명).</div></details>
+  <details><summary>📸 글리코사인·구로몬·웨이팅</summary><div class="body"><ul>
+    <li>글리코 명당: 에비스다리(정면)/강변계단(한산)/리버워크(반영). 골든아워+연사</li>
+    <li>구로몬시장은 <b>오전 일찍</b>(신선·한산)</li>
+    <li>웨이팅: 오픈런 or 15~16시. 구글맵 "실시간 혼잡도" 체크. 킨류=센니치마에점이 한산</li></ul></div></details>
+  <details><summary>🏪 편의점 / 주문</summary><div class="body">로손 바스크치즈케이크·에그샌드 / 패미마 파미치키 / 세븐 머신커피¥110. 후르츠산도, 「新」·「期間限定」 노리기. 라멘집은 <b>식권 자판기</b> 먼저. 물·오차 무료.</div></details>
+  <details><summary>🧭 에티켓 (실수 방지)</summary><div class="body"><ul>
+    <li><b>길거리 흡연 금지·벌금 ¥1,000</b>(전자담배 포함, 난바 단속多) → 지정구역만</li>
+    <li>에스컬레이터 <b>오른쪽 서기</b>(도쿄 반대)</li>
+    <li>식당 빈자리 직접 앉지 말고 <b>안내 기다리기</b>, 젓가락 밥에 꽂기 금지</li>
+    <li>쓰레기통 적음→들고다니기, 팁 없음, 여권 항상 소지</li></ul></div></details>
+</section>
+
+<!-- EVENT -->
+<section class="tab" id="event">
+  <h2 class="sec">🎉 여행 기간 이벤트·세일</h2>
+  <div class="note okb"><b>🛍️ 백화점 여름세일 딱 겹침!</b> 다카시마야 오사카 <b>6/26~7/7</b>(확정) · 한신·한큐 6/26 시작 · 다이마루 6월말~. (출발 직전 날짜 재확인)</div>
+  <details open><summary>📅 기간 중 / ❌ 못 보는 것</summary><div class="body"><ul>
+    <li><b>6/30(화)</b> 스미요시타이샤 미나즈키 오하라에(여름 정화) 16:00</li>
+    <li>교세라돔 콘서트 6/27·28 → 주변 혼잡</li>
+    <li>❌ 텐진마츠리는 7/24~25(여행 후) · 엑스포 2025는 종료(2026 운영X)</li>
+    <li>애니 팝업은 변동 큼 → <a class="lk" href="https://collabo-cafe.com/events/tag/osaka/" target="_blank">collabo-cafe 오사카</a>에서 확인</li></ul></div></details>
+</section>
+
+<!-- JP -->
+<section class="tab" id="jp">
+  <h2 class="sec">🗣️ 유용한 일본어</h2>
+  <div class="muted" style="margin-bottom:8px">정 안 되면 번역앱 카메라로 메뉴판 촬영!</div>
+  <table class="kv">
+    <tr><td>감사합니다</td><td>ありがとうございます · <b>아리가토- 고자이마스</b></td></tr>
+    <tr><td>실례/죄송</td><td>すみません · <b>스미마셍</b></td></tr>
+    <tr><td>영어 되나요?</td><td>英語、大丈夫ですか · <b>에이고 다이죠-부데스카</b></td></tr>
+    <tr><td>이거 주세요</td><td>これ ください · <b>코레 쿠다사이</b></td></tr>
+    <tr><td>얼마예요?</td><td>いくらですか · <b>이쿠라데스카</b></td></tr>
+    <tr><td>계산해 주세요</td><td>お会計 おねがいします · <b>오카이케- 오네가이시마스</b></td></tr>
+    <tr><td>카드 되나요?</td><td>カード 使えますか · <b>카-도 츠카에마스카</b></td></tr>
+    <tr><td>봉투 필요없어요</td><td>袋は いりません · <b>후쿠로와 이리마셍</b></td></tr>
+    <tr><td>~는 어디예요?</td><td>～は どこですか · <b>~와 도코데스카</b></td></tr>
+    <tr><td>2명이요</td><td>二人です · <b>후타리데스</b></td></tr>
+    <tr><td>예약 안 했어요</td><td>予約してません · <b>요야쿠 시테마셍</b></td></tr>
+    <tr><td>매운거 못먹어요</td><td>辛いの 苦手です · <b>카라이노 니가테데스</b></td></tr>
+    <tr><td>도와주세요!</td><td>助けて ください · <b>타스케테 쿠다사이</b></td></tr>
+  </table>
+</section>
+
+<!-- CHECK -->
+<section class="tab" id="check">
+  <h2 class="sec">✅ 출발 전 준비</h2>
+  <div class="card"><div id="checklist"></div></div>
+  <div class="note">체크는 이 폰에 저장돼요.</div>
+</section>
+
+<section id="detail" class="overlay"></section>
+
+</main>
+
+<footer>오사카 커플 가이드 · 2026.6.27–7.1 · 정보는 작성시점(2026.6) 기준, 현지 재확인 권장</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+/* ===== nav ===== */
+function goTab(t){
+  document.querySelectorAll('nav.tabs button').forEach(x=>x.classList.toggle('active',x.dataset.t===t));
+  document.querySelectorAll('section.tab').forEach(x=>x.classList.toggle('active',x.id===t));
+  scrollTo({top:0});
+  if(t==='map') setTimeout(initMap,60);
+}
+document.getElementById('tabs').addEventListener('click',e=>{const b=e.target.closest('button');if(b)goTab(b.dataset.t);});
+document.getElementById('menu').addEventListener('click',e=>{const b=e.target.closest('button');if(b)goTab(b.dataset.go);});
+
+/* ===== geo / directions ===== */
+var userPos=null;
+function fmtDist(m){return m<1000?Math.round(m)+'m':(m/1000).toFixed(1)+'km';}
+function hav(a,b,c,d){var R=6371000,p=Math.PI/180,x=(c-a)*p,y=(d-b)*p,s=Math.sin(x/2)**2+Math.cos(a*p)*Math.cos(c*p)*Math.sin(y/2)**2;return 2*R*Math.asin(Math.sqrt(s));}
+function locate(cb){
+  if(!navigator.geolocation){alert('이 기기는 위치를 지원하지 않아요');return;}
+  var m=document.getElementById('gpsmsg'); if(m)m.textContent='📡 위치 잡는 중…';
+  navigator.geolocation.getCurrentPosition(function(p){
+    userPos={lat:p.coords.latitude,lng:p.coords.longitude};
+    if(m)m.textContent='✅ 현재 위치 확보 (정확도 ±'+Math.round(p.coords.accuracy)+'m)';
+    if(window._map){if(window._me)window._me.setLatLng([userPos.lat,userPos.lng]);else{window._me=L.circleMarker([userPos.lat,userPos.lng],{radius:8,color:'#fff',fillColor:'#2a6cff',fillOpacity:1,weight:3}).addTo(window._map).bindPopup('📍 내 위치');}window._map.setView([userPos.lat,userPos.lng],15);}
+    render(); if(cb)cb();
+  },function(){if(m)m.textContent='❌ 위치 실패 — 설정에서 위치 권한 허용 필요';alert('위치 권한을 허용해 주세요');},{enableHighAccuracy:true,timeout:10000,maximumAge:60000});
+}
+function openMyLoc(){ if(userPos)location.href='https://www.google.com/maps/search/?api=1&query='+userPos.lat+','+userPos.lng; else locate(openMyLoc); }
+/* directions: current location -> dest (opens Google Maps app) */
+function dir(name,lat,lng){
+  var dest = (lat&&lng)? (lat+','+lng) : encodeURIComponent(name);
+  var o = userPos? ('&origin='+userPos.lat+','+userPos.lng) : '';
+  location.href='https://www.google.com/maps/dir/?api=1'+o+'&destination='+dest+'&travelmode=walking';
+}
+function see(name,lat,lng){
+  var q=(lat&&lng)?(lat+','+lng+'('+encodeURIComponent(name)+')'):encodeURIComponent(name);
+  location.href='https://www.google.com/maps/search/?api=1&query='+q;
+}
+
+/* ===== places (saved list, with coords) ===== */
+var CAT={kuji:'쿠지·가챠',otaku:'오타쿠샵',food:'맛집',cafe:'카페',sight:'관광',shop:'쇼핑',spa:'온천',station:'거점',home:'숙소',far:'당일치기'};
+var COL={kuji:'#ff8e76',otaku:'#ff8e76',food:'#ffb03a',cafe:'#ffb03a',sight:'#4aa8ff',shop:'#4aa8ff',spa:'#4aa8ff',station:'#3ad29f',home:'#3ad29f',far:'#ff6fae'};
+var P=[
+{n:'Crystal Court Namba (숙소)',c:'home',a:'난바',r:1,lat:34.6628,lng:135.4985},
+{n:'난카이난바역',c:'station',a:'난바',r:1,lat:34.66222,lng:135.50112},
+{n:'덴덴타운(닛폰바시)',c:'station',a:'닛폰바시',r:0,lat:34.6592,lng:135.5058},
+{n:'신사이바시스지 상점가',c:'sight',a:'신사이바시',r:1,lat:34.6727,lng:135.5009,d:'유리지붕 아케이드'},
+{n:'오사카역',c:'station',a:'우메다',r:1,lat:34.70254,lng:135.49593},
+{n:'신오사카역',c:'station',a:'기타',r:1,lat:34.73354,lng:135.50028},
+{n:'간사이 국제공항(KIX)',c:'station',a:'공항',r:1,lat:34.43472,lng:135.23278},
+{n:'가샤폰의 백화점 닛폰바시점',c:'kuji',a:'닛폰바시',r:1,lat:34.6602,lng:135.5056,d:'10–24시, 숙소 최근접'},
+{n:'가챠가챠의 숲 오타로드점',c:'kuji',a:'닛폰바시',r:1,lat:34.6598,lng:135.5064},
+{n:'가샤폰 백화점 난바파크스점',c:'kuji',a:'난바',r:1,lat:34.6579,lng:135.5019,d:'난카이 직결 6F'},
+{n:'gashacoco 에비스바시(가챠)',c:'kuji',a:'난바',r:1,lat:34.6666,lng:135.5013},
+{n:'GIGO 오사카 도톤보리 본점',c:'kuji',a:'도톤보리',r:1,lat:34.6688,lng:135.5013,d:'10시–익01시, 프렌다'},
+{n:'타이토 스테이션 난바점',c:'kuji',a:'난바',r:1,lat:34.6648,lng:135.5018,d:'프라이즈·코스프레 프리쿠라'},
+{n:'라운드원 스타디움 센니치마에',c:'kuji',a:'난바',r:1,lat:34.6647,lng:135.5045,d:'스포차·프렌다, 24시간'},
+{n:'Namco 오사카 닛폰바시점',c:'kuji',a:'닛폰바시',r:1,lat:34.6594,lng:135.5063},
+{n:'Crane Yokocho',c:'kuji',a:'난바',r:1,lat:34.668,lng:135.5015},
+{n:'라운드원 우메다점',c:'kuji',a:'우메다',r:1,lat:34.7045,lng:135.4992},
+{n:'반다이남코 크로스스토어 우메다',c:'kuji',a:'우메다',r:1,lat:34.7053,lng:135.4993,d:'HEP FIVE'},
+{n:'일번뽑기 공식숍 신사이바시PARCO',c:'kuji',a:'신사이바시',r:1,lat:34.6723,lng:135.5001},
+{n:'애니메이트 닛폰바시',c:'otaku',a:'닛폰바시',r:1,lat:34.6589,lng:135.5065,d:'1~2F+ACOS, 카드라보5F'},
+{n:'점프샵 신사이바시(다이마루9F)',c:'otaku',a:'신사이바시',r:1,lat:34.6723,lng:135.5009},
+{n:'점프샵 우메다(HEP6F)',c:'otaku',a:'우메다',r:1,lat:34.7048,lng:135.4962},
+{n:'스루가야 오타로드 애니하비관',c:'otaku',a:'닛폰바시',r:1,lat:34.6596,lng:135.5064},
+{n:'스루가야 닛폰바시 본관',c:'otaku',a:'닛폰바시',r:1,lat:34.659,lng:135.5059},
+{n:'라신반 닛폰바시 2호관',c:'otaku',a:'닛폰바시',r:1,lat:34.6595,lng:135.5063,d:'피규어 전문'},
+{n:'라신반 닛폰바시',c:'otaku',a:'닛폰바시',r:1,lat:34.6592,lng:135.5062},
+{n:'만다라케 그랜드카오스',c:'otaku',a:'닛폰바시',r:1,lat:34.6601,lng:135.5055,d:'6층 종합·중고'},
+{n:'슈퍼포테이토 오타로드',c:'otaku',a:'닛폰바시',r:1,lat:34.6597,lng:135.5066,d:'레트로 게임'},
+{n:'죠신 슈퍼키즈랜드 본점',c:'otaku',a:'닛폰바시',r:1,lat:34.6602,lng:135.5064,d:'프라모델·닌텐도굿즈'},
+{n:'정글 닛폰바시',c:'otaku',a:'닛폰바시',r:1,lat:34.6595,lng:135.5065,d:'희귀 피규어'},
+{n:'BOOKOFF PLUS 닛폰바시',c:'otaku',a:'닛폰바시',r:1,lat:34.6588,lng:135.506},
+{n:'K-Books 난바 일번관',c:'otaku',a:'닛폰바시',r:1,lat:34.6596,lng:135.5062,d:'여성향 강점'},
+{n:'EDION 난바 본점',c:'otaku',a:'난바',r:1,lat:34.6636,lng:135.5025},
+{n:'츠타야 에비스바시',c:'otaku',a:'난바',r:1,lat:34.668,lng:135.501},
+{n:'닌텐도 오사카(LUCUA SOUTH 13F)',c:'otaku',a:'우메다',r:1,lat:34.703,lng:135.4956},
+{n:'포켓몬센터 오사카(LUCUA 13F)',c:'otaku',a:'우메다',r:1,lat:34.703,lng:135.4956},
+{n:'포켓몬센터 DX+카페(다이마루9F)',c:'otaku',a:'신사이바시',r:1,lat:34.6723,lng:135.5009},
+{n:'키디랜드 우메다',c:'otaku',a:'우메다',r:1,lat:34.7049,lng:135.4996},
+{n:'치이카와랜드 신사이바시',c:'otaku',a:'신사이바시',r:1,lat:34.6723,lng:135.5001},
+{n:'리락쿠마 스토어 신사이바시',c:'otaku',a:'신사이바시',r:1,lat:34.6723,lng:135.5001},
+{n:'리락쿠마 스토어 우메다',c:'otaku',a:'우메다',r:1,lat:34.7047,lng:135.4997},
+{n:'551 호라이 본점',c:'food',a:'난바',r:1,lat:34.6651,lng:135.5013,d:'부타만 ¥460~'},
+{n:'치보 오코노미야키(도톤보리)',c:'food',a:'도톤보리',r:1,lat:34.6687,lng:135.5016},
+{n:'유카리 오코노미야키',c:'food',a:'난바',r:1,lat:34.666,lng:135.5033},
+{n:'타코타코킹(도톤보리)',c:'food',a:'도톤보리',r:1,lat:34.6686,lng:135.5023},
+{n:'하나다코(우메다 타코야키)',c:'food',a:'우메다',r:1,lat:34.7036,lng:135.4987},
+{n:'잇푸도 난바',c:'food',a:'난바',r:1,lat:34.6666,lng:135.5009},
+{n:'카도야 쇼쿠도(라멘)',c:'food',a:'우메다',r:1,lat:34.6962,lng:135.4985},
+{n:'나니와신풍라멘',c:'food',a:'난바',r:1,lat:34.6645,lng:135.503},
+{n:'무기토 멘스케(라멘)',c:'food',a:'기타',r:1,lat:34.6644,lng:135.5042},
+{n:'미타 제면소(츠케멘)',c:'food',a:'난바',r:1,lat:34.6628,lng:135.5055},
+{n:'야에카츠(쿠시카츠·신세카이)',c:'food',a:'신세카이',r:1,lat:34.6524,lng:135.5062},
+{n:'쿠시카츠 오오지(신세카이)',c:'food',a:'신세카이',r:1,lat:34.652,lng:135.5064},
+{n:'규카츠 토미타',c:'food',a:'난바',r:1,lat:34.666,lng:135.5025},
+{n:'돈카츠 만제',c:'food',a:'기타',r:1,lat:34.659,lng:135.4985},
+{n:'와규스키야키 쿠로노뒤 난바',c:'food',a:'난바',r:1,lat:34.6645,lng:135.502,d:'★4.9'},
+{n:'코코로 야키니쿠',c:'food',a:'난바',r:1,lat:34.665,lng:135.5035,d:'★4.8'},
+{n:'와규 이다텐',c:'food',a:'난바',r:1,lat:34.6655,lng:135.503},
+{n:'미키 야키니쿠',c:'food',a:'난바',r:1,lat:34.665,lng:135.5025},
+{n:'Yakiniku Gang(와규뷔페)',c:'food',a:'난바',r:1,lat:34.6655,lng:135.502},
+{n:'Hashiba-ke Nikusara(고기 ★4.8)',c:'food',a:'기타',r:1,lat:34.665,lng:135.503},
+{n:'이고소 스시 난바',c:'food',a:'난바',r:1,lat:34.6655,lng:135.5035},
+{n:'소바요시 본점',c:'food',a:'기타',r:1,lat:34.666,lng:135.504},
+{n:'Kasu Udon EBISUYA 본점',c:'food',a:'난바',r:1,lat:34.6628,lng:135.505},
+{n:'모헤지 우메다 루쿠아(몬자 ★4.9)',c:'food',a:'우메다',r:1,lat:34.703,lng:135.4956},
+{n:'론탄 미나미모리마치(중식)',c:'food',a:'기타',r:1,lat:34.6947,lng:135.5123},
+{n:'Watanabe Curry',c:'food',a:'난바',r:1,lat:34.6645,lng:135.5045},
+{n:'로바다야끼 카쿠레차야',c:'food',a:'난바',r:1,lat:34.666,lng:135.502},
+{n:'겟토(이자카야)',c:'food',a:'기타',r:1,lat:34.6655,lng:135.5025},
+{n:'Amemura Shain-shokudo(아메무라)',c:'food',a:'신사이바시',r:1,lat:34.671,lng:135.4985},
+{n:'리쿠로 오지상 난바(치즈케이크)',c:'cafe',a:'난바',r:1,lat:34.6655,lng:135.5013},
+{n:'사키모토 베이커리(식빵)',c:'cafe',a:'난바',r:1,lat:34.6683,lng:135.5036},
+{n:'마루후쿠 커피 센니치마에',c:'cafe',a:'난바',r:1,lat:34.6651,lng:135.503,d:'노포 킷사텐'},
+{n:'Amato Maeda 난바워크(지하)',c:'cafe',a:'난바',r:1,lat:34.6648,lng:135.5013},
+{n:'나미요시안(일본 디저트)',c:'cafe',a:'난바',r:1,lat:34.666,lng:135.5035},
+{n:'Asuka 카페(★4.9)',c:'cafe',a:'난바',r:1,lat:34.665,lng:135.503},
+{n:'Kopimal coffee(★4.9)',c:'cafe',a:'신사이바시',r:1,lat:34.67,lng:135.499},
+{n:'멜론 브레드',c:'cafe',a:'난바',r:1,lat:34.665,lng:135.503},
+{n:'grenier 우메다(페이스트리)',c:'cafe',a:'우메다',r:1,lat:34.7045,lng:135.4988},
+{n:'구로몬 시장',c:'sight',a:'닛폰바시',r:1,lat:34.6649,lng:135.5063,d:'오전 일찍'},
+{n:'난바 야사카신사(사자머리)',c:'sight',a:'난바',r:0,lat:34.6597,lng:135.496},
+{n:'카이유칸 해유관',c:'sight',a:'베이',r:1,lat:34.65487,lng:135.42893,d:'대형 수족관'},
+{n:'우메다 스카이빌딩 공중정원',c:'sight',a:'우메다',r:1,lat:34.7053,lng:135.4901,d:'야경 ⭐'},
+{n:'HEP FIVE 관람차',c:'sight',a:'우메다',r:1,lat:34.7047,lng:135.4997},
+{n:'빅스텝(아메무라)',c:'shop',a:'신사이바시',r:1,lat:34.6711,lng:135.4984,d:'구제·스트릿'},
+{n:'천신바시스지 상점가',c:'sight',a:'기타',r:1,lat:34.7018,lng:135.5111,d:'일본 최장 아케이드'},
+{n:'화이티 우메다(지하상가)',c:'sight',a:'우메다',r:1,lat:34.7015,lng:135.4988},
+{n:'오사카성',c:'sight',a:'기타',r:0,lat:34.68745,lng:135.52593},
+{n:'팀랩 보타니컬가든(나가이)',c:'sight',a:'나가이',r:0,lat:34.6157,lng:135.5181,d:'야외 야간(비주의)'},
+{n:'소라니와 온천(베이)',c:'spa',a:'베이',r:1,lat:34.6629,lng:135.4604,d:'유카타 온천'},
+{n:'난바 Loft',c:'shop',a:'난바',r:1,lat:34.6677,lng:135.5025},
+{n:'돈키호테 난바 센니치마에',c:'shop',a:'난바',r:1,lat:34.6667,lng:135.5028,d:'24시간'},
+{n:'루쿠아 오사카',c:'shop',a:'우메다',r:1,lat:34.703,lng:135.4956},
+{n:'루쿠아1100',c:'shop',a:'우메다',r:1,lat:34.7028,lng:135.4952},
+{n:'파르코 신사이바시',c:'shop',a:'신사이바시',r:1,lat:34.6723,lng:135.5001,d:'6F 팝컬처'},
+{n:'유니버설 스튜디오 재팬(USJ)',c:'far',a:'코노하나',r:0,lat:34.66554,lng:135.4323,d:'약 20분(가까운편)'},
+{n:'나라 공원(사슴)',c:'far',a:'나라',r:0,lat:34.6851,lng:135.843,d:'약 45분'},
+{n:'고베 동물왕국',c:'far',a:'고베',r:1,lat:34.65413,lng:135.22317,d:'약 1시간'},
+{n:'만국박람회 기념공원',c:'far',a:'스이타',r:0,lat:34.8074,lng:135.53,d:'약 30분'},
+{n:'라라포트 엑스포시티',c:'far',a:'스이타',r:1,lat:34.8057,lng:135.5347},
+{n:'이코마산조 유원지(야경)',c:'far',a:'이코마',r:0,lat:34.6789,lng:135.678},
+{n:'닌텐도 뮤지엄(교토 우지)',c:'far',a:'교토',r:1,lat:34.8928,lng:135.7842,d:'약 1.5h·예약제'},
+{n:'몽키파크 이와타야마(아라시야마)',c:'far',a:'교토',r:0,lat:35.01148,lng:135.67628},
+{n:'니지겐노모리(아와지)',c:'far',a:'아와지',r:0,lat:34.4163,lng:134.9333,d:'약 2h(꽤 멈)'}
+];
+var order=['kuji','otaku','food','cafe','sight','shop','spa','station','home','far'];
+var activeCat='all',q='';
+var chips=document.getElementById('pchips');
+function buildChips(){
+  chips.innerHTML='';
+  var add=function(k,l){var b=document.createElement('button');b.className='chip'+(k===activeCat?' on':'');b.textContent=l;b.dataset.k=k;chips.appendChild(b);};
+  add('all','전체 '+P.length); add('rain','☔ 실내');
+  order.forEach(function(k){var c=P.filter(function(p){return p.c===k;}).length;if(c)add(k,CAT[k]+' '+c);});
+}
+chips.addEventListener('click',function(e){var b=e.target.closest('.chip');if(!b)return;activeCat=b.dataset.k;buildChips();render();});
+document.getElementById('psearch').addEventListener('input',function(e){q=e.target.value.trim();render();});
+function render(){
+  var list=document.getElementById('plist');list.innerHTML='';
+  var items=P.filter(function(p){return activeCat==='all'||(activeCat==='rain'?p.r:p.c===activeCat);});
+  if(q){var ql=q.toLowerCase();items=items.filter(function(p){return (p.n+(p.d||'')+p.a+CAT[p.c]).toLowerCase().indexOf(ql)>=0;});}
+  if(userPos){items.forEach(function(p){p._d=hav(userPos.lat,userPos.lng,p.lat,p.lng);});items.sort(function(a,b){return a._d-b._d;});}
+  document.getElementById('pcount').textContent=items.length+'곳'+(userPos?' · 가까운 순':'');
+  var f=document.createDocumentFragment();
+  items.forEach(function(p){
+    var d=document.createElement('div');d.className='pcard';
+    var tags='<span class="pill area">'+p.a+'</span><span class="pill cat">'+CAT[p.c]+'</span>'+(p.r?'<span class="pill rain">☔</span>':'')+(userPos?'<span class="pill dist">'+fmtDist(p._d)+'</span>':'');
+    d.innerHTML='<div class="info"><div class="nm">'+p.n+'</div>'+(p.d?'<div class="muted" style="font-size:12px;margin-top:2px">'+p.d+'</div>':'')+'<div class="tags">'+tags+'</div></div>';
+    d.querySelector('.info').style.cursor='pointer';d.querySelector('.info').onclick=(function(o){return function(){openDetail(o);};})(p);
+    var bw=document.createElement('div');bw.className='btns';
+    var ib=document.createElement('button');ib.className='b ig';ib.textContent='📷 인스타';ib.onclick=(function(n){return function(){ig(n);};})(p.n);
+    var g=document.createElement('button');g.className='b go';g.textContent='🧭 길찾기';g.onclick=function(){dir(p.n,p.lat,p.lng);};
+    var s=document.createElement('button');s.className='b see';s.textContent='🔍 지도';s.onclick=function(){see(p.n,p.lat,p.lng);};
+    bw.appendChild(ib);bw.appendChild(g);bw.appendChild(s);d.appendChild(bw);f.appendChild(d);
+  });
+  list.appendChild(f);
+}
+buildChips();render();
+
+/* ===== map ===== */
+function initMap(){
+  if(window._map||typeof L==='undefined'){if(window._map)window._map.invalidateSize();return;}
+  window._map=L.map('map').setView([34.6665,135.5020],14);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OSM'}).addTo(window._map);
+  P.forEach(function(p){
+    var mk=L.circleMarker([p.lat,p.lng],{radius:6,color:'#0b0d12',weight:1,fillColor:COL[p.c],fillOpacity:.95}).addTo(window._map);
+    mk.bindPopup('<b>'+p.n+'</b><br>'+CAT[p.c]+' · '+p.a+'<br><a class="lk" href="https://www.google.com/maps/dir/?api=1'+(userPos?('&origin='+userPos.lat+','+userPos.lng):'')+'&destination='+p.lat+','+p.lng+'&travelmode=walking">🧭 길찾기</a> · <a class="lk" href="https://www.google.com/maps/search/?api=1&query='+p.lat+','+p.lng+'">🔍 보기</a>');
+  });
+  if(userPos){window._me=L.circleMarker([userPos.lat,userPos.lng],{radius:8,color:'#fff',fillColor:'#2a6cff',fillOpacity:1,weight:3}).addTo(window._map).bindPopup('📍 내 위치');}
+}
+
+/* ===== content card lists (no coords -> directions by name) ===== */
+function ig(name,handle){location.href=handle?('https://instagram.com/'+handle):('https://www.instagram.com/explore/search/keyword/?q='+encodeURIComponent(name+' 大阪'));}
+function renderCards(id,arr){
+  var el=document.getElementById(id);if(!el)return;var f=document.createDocumentFragment();
+  arr.forEach(function(p){
+    var d=document.createElement('div');d.className='pcard';
+    d.innerHTML='<div class="info"><div class="nm">'+p.n+'</div>'+(p.d?'<div class="muted" style="font-size:12px;margin-top:2px">'+p.d+'</div>':'')+'<div class="tags"><span class="pill area">'+p.a+'</span><span class="pill cat">'+p.t+'</span></div></div>';
+    d.querySelector('.info').style.cursor='pointer';d.querySelector('.info').onclick=(function(o){return function(){openDetail(o);};})(p);
+    var bw=document.createElement('div');bw.className='btns';
+    var ib=document.createElement('button');ib.className='b ig';ib.textContent='📷 인스타';ib.onclick=(function(n,h){return function(){ig(n,h);};})(p.n,p.ig);
+    var g=document.createElement('button');g.className='b go';g.textContent='🧭 길찾기';g.onclick=(function(n){return function(){dir(n+' 오사카');};})(p.n);
+    var s=document.createElement('button');s.className='b see';s.textContent='🔍 지도';s.onclick=(function(n){return function(){see(n+' 오사카');};})(p.n);
+    bw.appendChild(ib);bw.appendChild(g);bw.appendChild(s);d.appendChild(bw);f.appendChild(d);
+  });
+  el.innerHTML='';el.appendChild(f);
+}
+var OTAKU=[
+{n:'하레루야2 난바',a:'난바',t:'포켓몬카드',d:'일본최대 포켓몬TCG·영어친절, 난바 도보2분'},
+{n:'드래곤스타 오타로드',a:'닛폰바시',t:'카드샵',d:'싱글·오리파'},
+{n:'카드랩 오타로드 본점',a:'닛폰바시',t:'카드샵',d:'올라운더 대형'},
+{n:'카드랩 매입센터 난바',a:'난바',t:'카드매입',d:'팔 때 최적'},
+{n:'닌닌 닛폰바시',a:'닛폰바시',t:'포켓몬카드',d:'구판 빈티지·고매입'},
+{n:'GIRAFULL 오타로드',a:'닛폰바시',t:'카드샵',d:'영어친절·카드자판기'},
+{n:'옐로우서브마린 난바',a:'난바',t:'카드/하비',d:'포켓몬 인증점'},
+{n:'멜론북스 닛폰바시',a:'닛폰바시',t:'동인',d:'남성향 동인지'},
+{n:'토라노아나×스루가야 오토메동인지관',a:'닛폰바시',t:'여성향동인',d:'여성향/BL 10만점'},
+{n:'보크스 오사카 쇼룸',a:'닛폰바시',t:'돌·피규어',d:'구체관절 인형'},
+{n:'캡콤스토어 오사카(PARCO6F)',a:'신사이바시',t:'캐릭터샵',d:'몬헌·바이오'},
+{n:'동구리공화국 지브리(PARCO6F)',a:'신사이바시',t:'캐릭터샵',d:'일본최대급 지브리'},
+{n:'고질라/POP MART/레고(PARCO)',a:'신사이바시',t:'캐릭터샵',d:'6F 팝컬처층'},
+{n:'산리오 vivitix(HEP4F)',a:'우메다',t:'캐릭터샵',d:''},
+{n:'디즈니스토어 LUCUA',a:'우메다',t:'캐릭터샵',d:''},
+{n:'캡콤카페 우메다(다이마루13F)',a:'우메다',t:'콜라보카페',d:'예약권장'},
+{n:'포켓몬 카페(다이마루 신사이바시9F)',a:'신사이바시',t:'캐릭터카페',d:'31일전 예약전쟁'},
+{n:'커비 카페(다이마루 신사이바시9F)',a:'신사이바시',t:'캐릭터카페',d:'포켓몬카페 옆'},
+{n:'애니메이트 카페 닛폰바시',a:'닛폰바시',t:'콜라보카페',d:'추첨 예약'},
+{n:'THE GUEST cafe(PARCO6F)',a:'신사이바시',t:'콜라보카페',d:'대형 IP'},
+{n:'JANAI GAMES(HEP9F)',a:'우메다',t:'이색바',d:'숨은문 뒤 비밀 게임바'},
+{n:'C-pla 우메다 차야마치(가챠)',a:'우메다',t:'가챠',d:'서일본 최대 2,848대'},
+{n:'가챠가챠의 숲 우메다 차야마치',a:'우메다',t:'가챠',d:'약 2,400대'},
+{n:'카드박스 닛폰바시',a:'닛폰바시',t:'카드샵',d:'114석 대전·종합'},
+{n:'플레이즈 닛폰바시 본점',a:'닛폰바시',t:'카드샵',d:'닛폰바시역 1분·다양 타이틀'},
+{n:'magi 오사카 닛폰바시',a:'닛폰바시',t:'오리파',d:'포켓몬·유희왕·원피스 미스터리'},
+{n:'호비스테이션 닛폰바시',a:'닛폰바시',t:'카드/하비',d:'재고 폭넓고 저렴'},
+{n:'동구리공화국 지브리(LUCUA 9F)',a:'우메다',t:'캐릭터샵',d:'우메다 지브리'},
+{n:'스누피타운(한큐 산방가이)',a:'우메다',t:'캐릭터샵',d:'오사카 한정 굿즈'},
+{n:'고질라스토어/울트라맨M78(PARCO)',a:'신사이바시',t:'캐릭터샵',d:'특촬 팬 성지'},
+{n:'세일러문 -petit-(PARCO)',a:'신사이바시',t:'캐릭터샵',d:'여성향'},
+{n:'LINE FRIENDS/POP MART(PARCO)',a:'신사이바시',t:'캐릭터샵',d:'피규어·블라인드박스'},
+{n:'카이요도 피규어(다이마루9F Tullys)',a:'신사이바시',t:'피규어',d:'전시 카페'},
+{n:'namco 난바파크스',a:'난바',t:'게임센터',d:'몰 내 오락실·프리쿠라'},
+{n:'e-maid 메이드카페(닛폰바시)',a:'닛폰바시',t:'메이드카페',d:'오므라이스 아트'}
+];
+var FASHION=[
+{n:'KINJI 아메무라',a:'아메무라',t:'구제',d:'대형 구제·가성비'},
+{n:'古着屋JAM 아메무라',a:'아메무라',t:'구제',d:'빈티지 명가'},
+{n:'2nd STREET 아메무라',a:'아메무라',t:'중고',d:'의류·명품, 남성 컨셉점'},
+{n:'ASAGI 아메무라',a:'아메무라',t:'빈티지',d:'유럽 앤티크~디자이너 3층'},
+{n:'Spinns 아메무라',a:'아메무라',t:'스트릿',d:'저렴 트렌드'},
+{n:'RAGTAG 신사이바시',a:'신사이바시',t:'구제',d:'디자이너 중고'},
+{n:'KINDAL 아메무라',a:'아메무라',t:'중고',d:'브랜드 중고'},
+{n:'Pigsty 아메무라',a:'아메무라',t:'빈티지',d:'아메카지'},
+{n:'11747391 아메무라',a:'아메무라',t:'셀렉트',d:'구제+신진 임포트'},
+{n:'BIG STEP 아메무라',a:'아메무라',t:'복합몰',d:'구제·스트릿 테넌트, B1오락'},
+{n:'GU 신사이바시 플래그십',a:'신사이바시',t:'SPA',d:'1호점, 앱 1,000엔 쿠폰'},
+{n:'UNIQLO 신사이바시 플래그십',a:'신사이바시',t:'SPA',d:''},
+{n:'WEGO 신사이바시(일본최대)',a:'신사이바시',t:'스트릿',d:'빈티지존'},
+{n:'Onitsuka Tiger 신사이바시',a:'신사이바시',t:'슈즈',d:''},
+{n:'BIOTOP OSAKA(호리에)',a:'호리에',t:'셀렉트',d:'패션+식물+카페, 루프탑'},
+{n:'Maison/Café Kitsune 남호리에',a:'호리에',t:'셀렉트',d:'여우로고·카페'},
+{n:'TIMELESS COMFORT 남호리에',a:'호리에',t:'리빙',d:'가구·라이프스타일'},
+{n:'ASOKO 호리에',a:'호리에',t:'잡화',d:'저렴 디자인 잡화'},
+{n:'LUCUA / LUCUA 1100',a:'우메다',t:'백화점',d:'오사카역 직결, 지브리·디즈니'},
+{n:'Grand Front Osaka',a:'우메다',t:'복합몰',d:'260점포'},
+{n:'NU 차야마치',a:'우메다',t:'패션빌딩',d:'영패션+가챠'},
+{n:'한큐 멘즈 우메다',a:'우메다',t:'백화점',d:'남성 패션'},
+{n:'UNIQLO 우메다 플래그십',a:'우메다',t:'SPA',d:'2025.10 서일본 최대'},
+{n:'Grand Green Osaka',a:'우메다',t:'신상',d:'2025 잔디공원+몰'},
+{n:'Flying Tiger 신사이바시',a:'신사이바시',t:'잡화',d:'북유럽 디자인'},
+{n:'Standard Products / 3COINS',a:'난바·우메다',t:'잡화',d:'무인양품풍·300엔숍'},
+{n:'Zoff / JINS(안경)',a:'각지',t:'안경',d:'당일수령·저렴'},
+{n:'GRIZZLY 아메무라',a:'아메무라',t:'구제',d:'아메카지·밀리터리 빈티지'},
+{n:'RINKAN 아메무라',a:'아메무라',t:'명품중고',d:'슈프림·하이브랜드 중고'},
+{n:'THE BIGAPPLE WESTSIDE',a:'아메무라',t:'구제',d:'미국 직수입 대량 구제 약 50평'},
+{n:'pug LUTTER·iot·DAL(빈티지빌딩)',a:'나카자키초',t:'구제',d:'한 건물 3개 콘셉트 구제샵'},
+{n:'BEAMS 신사이바시',a:'신사이바시',t:'셀렉트',d:'일본 대표 셀렉트(2025 BEAMS PLUS 신규)'},
+{n:'UNITED ARROWS 우메다',a:'우메다',t:'셀렉트',d:'고급 셀렉트'},
+{n:'journal standard 우메다',a:'우메다',t:'셀렉트',d:'일본 인기 셀렉트'},
+{n:'niko and... 우메다',a:'우메다',t:'라이프',d:'의류+잡화+카페'},
+{n:'FREAKS STORE 우메다',a:'우메다',t:'셀렉트',d:'아메카지 셀렉트'},
+{n:'EST 우메다',a:'우메다',t:'패션빌딩',d:'트렌디 영 브랜드'},
+{n:'HEP FIVE(패션빌딩)',a:'우메다',t:'패션빌딩',d:'영패션+빨간 관람차+산리오'},
+{n:'CONZ 남호리에',a:'호리에',t:'셀렉트',d:'2025 간사이 첫 출점·COOKONE 아트'},
+{n:'8G Horie Terrace',a:'호리에',t:'브런치',d:'인싸 브런치+인증샷'},
+{n:'GRANKNOT coffee 호리에',a:'호리에',t:'카페',d:'오렌지스트리트 옆 스페셜티'},
+{n:'agete / 4°C / Lattice',a:'각지',t:'액세서리',d:'커플링·데일리 주얼리'}
+];
+var CAFE=[
+{n:'LiLo Coffee Roasters',a:'아메무라',t:'스페셜티',d:'23시까지·커피러버 성지'},
+{n:'리로 커피 킷사',a:'신사이바시',t:'스페셜티',d:'쇼와레트로·커피젤리'},
+{n:'Mel Coffee Roasters',a:'신마치',t:'스페셜티',d:'미니멀 로스터리'},
+{n:'TAKAMURA 와인&커피',a:'히고바시',t:'스페셜티',d:'초대형 창고·인생샷'},
+{n:'OSARU COFFEE',a:'난바',t:'스페셜티',d:'자가배전+디저트'},
+{n:'준킷사 아메리칸',a:'난바',t:'레트로킷사',d:'1946·핫케이크'},
+{n:'아라비야 커피',a:'난바',t:'레트로킷사',d:'1951 노포'},
+{n:'코히테이 캐빈',a:'난바',t:'레트로킷사',d:'선실 컨셉'},
+{n:'킷사 도레미(喫茶ドレミ)',a:'신세카이',t:'레트로킷사',d:'90s 만화 감성·과일 푸딩/파르페·수~일 10–18시(월·화 휴무)'},
+{n:'우지엔 킷사코 신사이바시',a:'신사이바시',t:'말차',d:'아케이드 속 와노살롱'},
+{n:'wad omotenashi cafe',a:'신사이바시',t:'말차',d:'미니멀 차'},
+{n:'사료 쓰지리(다이마루 신사이바시)',a:'신사이바시',t:'말차',d:'교토 기온쓰지리 파르페'},
+{n:'OTTO COFFEE & SWEETS',a:'신사이바시',t:'디저트',d:'푸딩·까눌레'},
+{n:'旬゛喫茶 후츠우니후루우츠',a:'호리에',t:'후르츠산도',d:'알록달록 후르츠산도+크림치즈·1F 베이커리·계단샷 명소 📸'},
+{n:'파페테리아 팔 신사이바시',a:'신사이바시',t:'파르페',d:'시메파르페·야간바무드'},
+{n:'Brooklyn Parlor 신사이바시',a:'신사이바시',t:'북카페',d:'책+음악+식사'},
+{n:'SPIA CAFE 나카자키초',a:'나카자키초',t:'감성카페',d:'모노톤 한국풍·인생샷'},
+{n:'Cafe 타이요노토(태양의탑)',a:'나카자키초',t:'감성카페',d:'나카자키초 원조·크림소다'},
+{n:'Pathfinder XNOBU',a:'나카자키초',t:'라떼아트',d:'레인보우 라떼'},
+{n:'RTC Coffee 나카자키초',a:'나카자키초',t:'스페셜티',d:'까눌레·라떼클래스'},
+{n:'KAYA cafe 나카자키초',a:'나카자키초',t:'고민가',d:'두부 티라미수'},
+{n:'neel 中崎',a:'나카자키초',t:'카페',d:'돈카츠샌드·슈가버터크레페'},
+{n:'Hannoc 나카자키초',a:'나카자키초',t:'파티세리',d:'오픈키친 케이크'},
+{n:'심야킷사 Mansarde',a:'나카자키초',t:'심야킷사',d:'20세+ 어른 레트로바(밤)'},
+{n:'green pepe 나카자키초',a:'나카자키초',t:'빈티지샵',d:'쇼와 레트로 잡화'},
+{n:'OSA COFFEE 신사이바시',a:'신사이바시',t:'스페셜티',d:'현지인 감성카페(한국블로그 인기)'},
+{n:'라줄리(Lazuli) 신사이바시',a:'신사이바시',t:'감성카페',d:'모노톤 한국풍 인생샷'},
+{n:'Calo Bookshop & Cafe',a:'히고바시',t:'북카페',d:'아트서점+갤러리+카페'},
+{n:'喫茶 하모니(레코드 킷사)',a:'다니마치',t:'레트로킷사',d:'낮 레코드킷사·밤 바'},
+{n:'밋코우야(야키이모)',a:'나카자키초',t:'디저트',d:'군고구마 선데이·품종비교'},
+{n:'Salon de AManTO',a:'나카자키초',t:'고민가카페',d:'100년 가옥 아트 카페'},
+{n:'잼팟(jam pot)',a:'나카자키초',t:'핸드메이드',d:'현지작가 액세서리'}
+];
+var FOODT=[
+{n:'멘야 죠로쿠 난바',a:'난바',t:'라멘 ★3.73',d:'나니와 블랙 중화소바'},
+{n:'나니와 멘지로',a:'난바',t:'라멘 ★3.71',d:'조개·닭 맑은국물'},
+{n:'치토세 본점',a:'난바',t:'우동 ★3.72',d:'니쿠스이 발상지'},
+{n:'키다타케 우동',a:'난바',t:'우동 ★3.69',d:'초강력 식감'},
+{n:'소바도코로 토키',a:'기타신치',t:'소바 ★3.67',d:'소바 백명점'},
+{n:'슈하리 쿠로몬',a:'닛폰바시',t:'소바 ★3.60',d:'본격 손소바'},
+{n:'롯카쿠테이',a:'닛폰바시',t:'쿠시카츠 ★3.69',d:'고급 창작+와인·예약필수'},
+{n:'타코우메 본점',a:'도톤보리',t:'오뎅 ★3.55',d:'1844 일본最古 오뎅'},
+{n:'스시 이치에이',a:'닛폰바시',t:'스시 ★3.77',d:'에도마에 오마카세·예약필수'},
+{n:'난바 스시레이',a:'난바',t:'스시 ★3.50',d:'가성비 오마카세'},
+{n:'니쿠쇼 나카타 본점',a:'도톤보리',t:'야키니쿠 ★3.69',d:'백명점·토로탄'},
+{n:'라이브야키니쿠 텐구',a:'난바',t:'야키니쿠 ★3.63',d:'눈앞서 구워줌'},
+{n:'텐푸라 안도',a:'닛폰바시',t:'텐푸라 ★3.74',d:'백명점·예약필수'},
+{n:'텐푸라 신사이바시 잇테쓰',a:'신사이바시',t:'텐푸라 ★3.58',d:'접근성 좋은 오마카세'},
+{n:'스미야키 우나후지 우메다',a:'우메다',t:'장어 ★3.62',d:'아오우나기 히츠마부시'},
+{n:'네도코 신사이바시',a:'신사이바시',t:'장어 ★3.57',d:'간사이풍 숯불장어'},
+{n:'혼코게쓰',a:'닛폰바시',t:'갓포 ★4.53',d:'오사카 갓포 정점(특별한날)'},
+{n:'시마노우치 이치요',a:'신사이바시',t:'갓포 ★3.85',d:'가성비 카운터 갓포'},
+{n:'나니와갓포 기가와',a:'닛폰바시',t:'갓포 ★3.68',d:'나니와 갓포 원조'},
+{n:'아지노야 본점',a:'난바',t:'오코노미야키 ★3.60',d:'백명점·상시행렬'},
+{n:'미즈노',a:'도톤보리',t:'오코노미야키 ★3.57',d:'마100% 야마이모야키'},
+{n:'와나카 센니치마에',a:'난바',t:'타코야키 ★3.50',d:'2층 착석·비와도OK'},
+{n:'스탠드 츠마미구이',a:'난바',t:'다치노미 ★3.63',d:'우라난바 창작안주+카레'},
+{n:'쿠쿠루 도톤보리(타코야키)',a:'도톤보리',t:'타코야키',d:'빗쿠리 타코야키·큰 문어, 주말 줄'},
+{n:'쿠시카츠 다루마 도톤보리',a:'도톤보리',t:'쿠시카츠',d:'성난아저씨 간판·두번찍기 금지'},
+{n:'킨류라멘 도톤보리',a:'도톤보리',t:'라멘',d:'24시간·김치/부추 셀프'},
+{n:'도톤보리 이마이(우동)',a:'도톤보리',t:'우동',d:'조용한 노포·수/넷째화 휴무'},
+{n:'551 호라이(부타만)',a:'난바',t:'중식',d:'부타만 ¥460~·갓 찐 거 줄'}
+];
+var FOODU=[
+{n:'차야마치 팩토리카페',a:'우메다',t:'런치뷔페',d:'¥1,500~ 음료·뷔페',ig:'factorycafe_chayamachi'},
+{n:'다시 고바야시',a:'우메다',t:'정식',d:'¥900~ 밥·절임 리필',ig:'dashikobayashi'},
+{n:'우메다 워프',a:'우메다',t:'런치',d:'¥1,760~',ig:'wharf_umeda'},
+{n:'야키니쿠 고지마 별관 우메다',a:'우메다',t:'야키니쿠',d:'런치 ¥990~',ig:'yakiniku_kojima_umeda'},
+{n:'The 33 Tea & Bar Terrace',a:'우메다',t:'카페레스토',d:'수플레 오므라이스 ¥1,870~',ig:'the33_cafe_and_restaurant'},
+{n:'OHANABATAKE 그랑프론트',a:'우메다',t:'카페',d:'¥1,000~ 아침8시',ig:'ohana_gfo'},
+{n:'나가야 오므라이스(역앞3빌딩)',a:'우메다',t:'오므라이스',d:'¥900~',ig:'nagayaomuraisu'},
+{n:'쓰카다 스키야키샤브 KITTE',a:'우메다',t:'스키야키',d:'¥2,000~',ig:'sukiyakitsukada.osaka'},
+{n:'고베규 철판 TATARA',a:'우메다',t:'와규철판',d:'¥3,850~',ig:'steak_tatara.umeda'},
+{n:'Koko Head cafe',a:'우메다',t:'브런치',d:'¥1,200~ 하와이안',ig:'kokoheadcafeosaka'},
+{n:'포타마 KITTE오사카',a:'우메다',t:'무스비',d:'스팸계란 ¥480~',ig:'potama_kitteoosaka'},
+{n:'멘스타일 타니모토케 우메다',a:'우메다',t:'라멘',d:'¥1,100~ 새벽까지',ig:'menstyletanimotoke_osakaumeda'},
+{n:'LAZY YOGURT 나카자키초',a:'나카자키초',t:'요거트볼',d:'¥1,200~',ig:'lazyyogurt_nakazaki'},
+{n:'YOGI 우메다',a:'우메다',t:'그릭요거트',d:'¥1,250~',ig:'yogi_umeda_greekyogurt'}
+];
+var HIDDEN=[
+{n:'다이안 텐마(다치노미)',a:'텐마',t:'다치노미',d:'회 퀄리티 갑·가성비'},
+{n:'코마짱 텐마',a:'텐마',t:'다치노미',d:'안주3+음료 ¥500'},
+{n:'우라텐마 골목',a:'텐마',t:'술집골목',d:'하시고자케 성지'},
+{n:'코코로 철판&와인',a:'후쿠시마',t:'바르',d:'창작요리+합리적 와인'},
+{n:'골목안 사케바',a:'후쿠시마',t:'사케바',d:'엄선 사케 30종'},
+{n:'SALON1201',a:'키타신치',t:'야경바',d:'최상층 소파·특별한날'},
+{n:'PESCA 키타신치',a:'키타신치',t:'다이닝바',d:'본격 이탈리안'},
+{n:'텐구(신세카이)',a:'신세카이',t:'다치노미',d:'잔잔요코초 노포'},
+{n:'오미야 본점(신세카이)',a:'신세카이',t:'호르몬',d:'호르몬 튀김 명물'},
+{n:'도이상점(쓰루하시)',a:'쓰루하시',t:'호르몬',d:'포장마차 원조 즉석'},
+{n:'호르몬 소라(코리아타운)',a:'쓰루하시',t:'호르몬',d:'30종+ ¥500~'},
+{n:'Compufunk Records',a:'기타하마',t:'리스닝바',d:'테크노 레코드+야경'},
+{n:'Mole & Hosoi Coffees',a:'후시미초',t:'리스닝바',d:'은행 금고실 JBL 재즈'},
+{n:'yacipoci',a:'히라노초',t:'리스닝바',d:'프리재즈 LP 3천장'},
+{n:'Winestand No-2',a:'혼마치바시',t:'와인바',d:'재즈+내추럴와인 강변'},
+{n:'SAUNA OOO OSAKA',a:'호리에',t:'사우나',d:'세련된 핀란드식'},
+{n:'한신 사우나(호텔한신)',a:'후쿠시마',t:'사우나',d:'야경 외기욕'},
+{n:'호젠지 요코초',a:'난바',t:'골목',d:'이끼불상·돌바닥 옛 정취(야간 등불)'},
+{n:'덴포잔 대관람차',a:'베이',t:'야경',d:'112.5m·투명바닥·라이트업'},
+{n:'아베노하루카스 300',a:'덴노지',t:'전망대',d:'일본 최고층·통유리'},
+{n:'츠텐카쿠',a:'신세카이',t:'야경',d:'신세카이 랜드마크 라이트업'},
+{n:'나카노시마(강변·레트로건축)',a:'나카노시마',t:'산책',d:'중앙공회당·도서관 야간 라이트업'},
+{n:'우츠보 공원',a:'우츠보',t:'산책',d:'장미정원·도심 휴식'},
+{n:'기후야 우라텐마',a:'텐마',t:'쿠시카츠',d:'신세카이 노포 분점(2024)'},
+{n:'escapé LODGE(리스닝바)',a:'가와라마치',t:'리스닝바',d:'낮 에스프레소·밤 럼, 웨스트코스트 록'},
+{n:'다이토요 사우나',a:'우메다',t:'사우나',d:'대형·로우류 퍼포먼스'},
+{n:'우라코지 규니쿠텐(키타신치)',a:'키타신치',t:'은신처',d:'힐튼 지하 고기+칵테일'},
+{n:'산타마리아호 유람선',a:'베이',t:'크루즈',d:'오사카항 데이라이즈(어메이징패스)'}
+];
+renderCards('otakuList',OTAKU);
+renderCards('fashionList',FASHION);
+renderCards('cafeList',CAFE);
+renderCards('hiddenList',HIDDEN);
+/* food with sub-filter */
+var foodMode='tabelog';
+var fc=document.getElementById('foodchips');
+['tabelog|타베로그 고점','umeda|우메다 점심 14','saved|내 리스트 맛집'].forEach(function(s){
+  var p=s.split('|'),b=document.createElement('button');b.className='chip'+(p[0]===foodMode?' on':'');b.textContent=p[1];b.dataset.m=p[0];fc.appendChild(b);
+});
+fc.addEventListener('click',function(e){var b=e.target.closest('.chip');if(!b)return;foodMode=b.dataset.m;fc.querySelectorAll('.chip').forEach(function(x){x.classList.toggle('on',x.dataset.m===foodMode);});drawFood();});
+function drawFood(){
+  if(foodMode==='tabelog')renderCards('foodList',FOODT);
+  else if(foodMode==='umeda')renderCards('foodList',FOODU);
+  else{var sv=P.filter(function(p){return p.c==='food';}).map(function(p){return{n:p.n,a:p.a,t:'내 리스트',d:p.d||''};});renderCards('foodList',sv);}
+}
+drawFood();
+
+/* ===== unified search + detail view ===== */
+function grp(o){return o.c?CAT[o.c]:o.t;}
+var SPOTS=[].concat(P,OTAKU,FASHION,CAFE,FOODT,FOODU,HIDDEN);
+var TOPICS=[
+ {n:'🎟️ 할인 쿠폰 총정리',kw:'쿠폰 할인 돈키 돈키호테 빅카메라 gu 지유 클룩 kkday 면세 카카오 네이버 분할결제 페이',t:'coupon'},
+ {n:'🧾 면세(택스리펀) 안내',kw:'면세 택스리펀 tax free 환급 여권 5000',t:'coupon'},
+ {n:'🚆 라피트·교통·ICOCA·짐',kw:'라피트 rapit 교통 지하철 메트로 icoca 공항 kix 짐 코인로커 어메이징패스',t:'move'},
+ {n:'🌧️ 비 오는 날 실내 코스',kw:'비 장마 실내 우산 indoor',t:'rain'},
+ {n:'💑 데이트 코스·야경·포토·가는길',kw:'코스 데이트 야경 포토 글리코 관람차 가는길 en route',t:'course'},
+ {n:'💎 현지 꿀팁·드럭스토어·에티켓',kw:'꿀팁 팁 드럭스토어 약 흡연 에티켓 슈퍼 동전파스',t:'tips'},
+ {n:'🎮 포켓몬 프렌다·카드·닌텐도',kw:'포켓몬 프렌다 카드 tcg 닌텐도 가챠 게임 메자스타',t:'otaku'},
+ {n:'🎉 이벤트·세일',kw:'이벤트 세일 팝업 백화점 여름세일',t:'event'},
+ {n:'🗣️ 일본어 회화',kw:'일본어 회화 말 번역',t:'jp'}
+];
+function spotCard(p){
+  var d=document.createElement('div');d.className='pcard';
+  var info=document.createElement('div');info.className='info';info.style.cursor='pointer';
+  info.innerHTML='<div class="nm">'+p.n+'</div>'+(p.d?'<div class="muted" style="font-size:12px;margin-top:2px">'+p.d+'</div>':'')+'<div class="tags"><span class="pill area">'+p.a+'</span><span class="pill cat">'+grp(p)+'</span>'+(p.r?'<span class="pill rain">☔</span>':'')+'</div>';
+  info.onclick=function(){openDetail(p);};
+  var bw=document.createElement('div');bw.className='btns';
+  var ib=document.createElement('button');ib.className='b ig';ib.textContent='📷';ib.onclick=function(){ig(p.n,p.ig);};
+  var g=document.createElement('button');g.className='b go';g.textContent='🧭';g.onclick=function(){dir(p.n,p.lat,p.lng);};
+  bw.appendChild(ib);bw.appendChild(g);d.appendChild(info);d.appendChild(bw);return d;
+}
+function gsearchRun(){
+  var v=document.getElementById('gsearch').value.trim().toLowerCase();
+  var res=document.getElementById('gresults');res.innerHTML='';
+  if(!v){document.getElementById('gcount').textContent='가게 '+SPOTS.length+'곳 + 정보를 한 번에 검색 · 결과를 누르면 상세페이지';return;}
+  var tp=TOPICS.filter(function(x){return (x.n+' '+x.kw).toLowerCase().indexOf(v)>=0;});
+  var sp=SPOTS.filter(function(x){return (x.n+' '+x.a+' '+grp(x)+' '+(x.d||'')).toLowerCase().indexOf(v)>=0;});
+  document.getElementById('gcount').textContent='정보 '+tp.length+' · 장소 '+sp.length+'곳';
+  var f=document.createDocumentFragment();
+  tp.forEach(function(x){var d=document.createElement('div');d.className='pcard';d.style.cursor='pointer';d.innerHTML='<div class="info"><div class="nm">'+x.n+'</div><div class="tags"><span class="pill ok">정보 ▸</span></div></div>';d.onclick=function(){goTab(x.t);};f.appendChild(d);});
+  sp.forEach(function(x){f.appendChild(spotCard(x));});
+  res.appendChild(f);
+}
+document.getElementById('gsearch').addEventListener('input',gsearchRun);
+
+function esc(s){return String(s).replace(/'/g,"\\'");}
+function getDetail(n){
+  if(/돈키|돈키호테/i.test(n))return '<div class="note"><b>🟣 돈키호테 완전공략</b><br>① <a class="lk" href="https://japanportal.donki-global.com/coupon/?ptcd=0189000104" target="_blank">돈키 쿠폰 열기</a>(여권+화면, 한 단말 1회 → 동행 폰으로 재사용)<br>② 면세 10% + 추가 5%(세전 1만↑)/7%(3만↑)<br>③ <b>분할결제 꿀팁:</b> 카카오페이 ~2,000엔 + 네이버페이(Alipay+) ~2,000엔 즉시할인 따로 결제(이벤트성, 앱서 확인)<br>④ 24시간(도톤보리). 곤약젤리=파우치형만 위탁수하물<br>⑤ <b>한국인 필수템:</b> 동전파스·휴족시간·카베진α·EVE·메구리즘 안대·fino 헤어팩·키캣 한정맛</div>';
+  if(/빅카메라|bic/i.test(n))return '<div class="note"><b>🔴 빅카메라</b> 면세10% + 가전7%/화장품5% (~17%). 계산대 바코드+여권. 유효 ~2026.10.31. ⚠️게임 소프트는 추가쿠폰 제외(면세만).</div>';
+  if(/\bGU\b|지유/i.test(n))return '<div class="note"><b>👕 GU</b> 공식앱 설치→가입 즉시 ¥1,000 쿠폰(일정금액↑). 면세10%+카카오페이. 줄서기 전 앱 깔기!</div>';
+  if(/프렌다|포켓몬/i.test(n))return '<div class="note"><b>🎴 포켓몬</b> "게임팩 가챠"=<b>프렌다</b>(라운드원 센니치마에·GiGO·타이토, 100엔+픽당100엔). 카드: 하레루야2 난바(영어친절)·드래곤스타. 신상 스톰에메랄다(메가레쿠쟈) 7/31.</div>';
+  if(/라운드원|round/i.test(n))return '<div class="note"><b>🎮 라운드원</b> 스포차(50종 무제한 3h ¥3,000)·포켓몬 프렌다·크레인·볼링. 24시간. 비오는날 커플 종일코스 최고.</div>';
+  if(/라피트|rapi/i.test(n)||/간사이.*공항|KIX/i.test(n))return '<div class="note"><b>🎫 라피트</b> 좌석 미리 예약(트립닷컴 1일전), QR 제시(스샷❌·다크모드OFF). KIX↔난바 34~40분, 난카이난바 3층 9번홈.</div>';
+  if(/포켓몬 카페|포켓몬센터 DX/i.test(n))return '<div class="note"><b>🍽️ 포켓몬 카페</b> 다이마루 신사이바시 9F. 웹 예약 전용, <b>방문 31일 전 18:00(JST) 오픈 → 수초 내 매진</b>. 취소표는 전날 밤 노려보기.</div>';
+  if(/구로몬/i.test(n))return '<div class="note"><b>🦐 구로몬 시장</b> 해산물·먹거리. <b>오전 일찍</b> 가야 신선하고 한산. 가게 앞에서 먹고 가는 분위기.</div>';
+  if(/와나카/i.test(n))return '<div class="note"><b>🐙 와나카</b> 2층 착석 공간 있어 <b>비 와도</b> 앉아서 갓 구운 타코야키. 미슐랭 게재.</div>';
+  return '';
+}
+function openDetail(p){
+  var el=document.getElementById('detail');var coords=(p.lat&&p.lng);
+  el.innerHTML='<div class="ovhead"><button class="backb" onclick="closeDetail()">← 뒤로</button><div class="muted">'+grp(p)+' · '+p.a+'</div></div>'+
+    '<div class="dt-title">'+p.n+'</div>'+
+    '<div><span class="pill area">'+p.a+'</span><span class="pill cat">'+grp(p)+'</span>'+(p.r?'<span class="pill rain">☔ 실내(비와도OK)</span>':'')+'</div>'+
+    (p.d?'<p style="font-size:14.5px;margin:12px 0">'+p.d+'</p>':'')+
+    getDetail(p.n)+
+    '<div class="dt-btns">'+
+    '<button class="b ig" onclick="ig(\''+esc(p.n)+'\',\''+(p.ig||'')+'\')">📷 인스타 사진</button>'+
+    '<button class="b go" onclick="dir(\''+esc(p.n)+'\','+(coords?p.lat:'null')+','+(coords?p.lng:'null')+')">🧭 길찾기</button>'+
+    '<button class="b see" onclick="see(\''+esc(p.n)+'\','+(coords?p.lat:'null')+','+(coords?p.lng:'null')+')">🔍 지도</button></div>'+
+    '<div class="muted" style="margin-top:10px">📷=실제 인스타 피드 / 🧭=현재 위치→여기 길찾기(구글맵 앱) / 🔍=구글맵에서 위치 보기</div>';
+  el.classList.add('on');scrollTo({top:0});
+}
+function closeDetail(){document.getElementById('detail').classList.remove('on');}
+gsearchRun();
+
+/* ===== checklist ===== */
+var CHK=['전자항공권 캡처','라피트 가는편·오는편 좌석 예약(1일 전)','숙소 체크인 전화(도착 1일 전)','구글맵 오사카 오프라인 지도','파파고/구글번역 오프라인팩','GU 앱 설치(1,000엔 쿠폰)','클룩/KKday 쿠폰·티켓 예매','돈키 쿠폰 링크 저장','eSIM 설치(소용량)','현금 약 2만 엔 + 터치결제 카드','ICOCA(아이폰=모바일Suica)','접이식 우산+얇은 우비','속건성 옷·여분 양말','여권 6개월+ 유효','포켓몬카페 예약(원하면, 31일전)','이 가이드 폰에 저장'];
+var cl=document.getElementById('checklist');var saved={};try{saved=JSON.parse(localStorage.getItem('osaka_chk2')||'{}');}catch(e){}
+CHK.forEach(function(t,i){
+  var id='c'+i,row=document.createElement('label');
+  row.style.cssText='display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-top:'+(i?'1px solid var(--line)':'none')+';cursor:pointer;font-size:14px';
+  row.innerHTML='<input type="checkbox" '+(saved[id]?'checked':'')+' style="width:20px;height:20px;margin-top:2px;flex:0 0 auto"><span>'+t+'</span>';
+  var cb=row.querySelector('input');
+  cb.addEventListener('change',function(){saved[id]=cb.checked;localStorage.setItem('osaka_chk2',JSON.stringify(saved));row.style.opacity=cb.checked?.5:1;});
+  if(saved[id])row.style.opacity=.5;cl.appendChild(row);
+});
+</script>
+</body>
+</html>
