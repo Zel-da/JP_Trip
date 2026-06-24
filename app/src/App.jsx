@@ -21,6 +21,7 @@ const fmtD = (m) => m < 1000 ? Math.round(m) + 'm' : (m / 1000).toFixed(1) + 'km
 
 // 🔒 비밀번호: 바꾸려면 따옴표 안 값만 수정 후 재빌드/배포
 const PASS = '0627'
+const grad = (c) => `linear-gradient(135deg, ${c}, ${c}bb)`
 
 function useLS(key, init) {
   const [v, setV] = useState(() => { try { const s = localStorage.getItem(key); return s ? JSON.parse(s) : init } catch { return init } })
@@ -90,13 +91,14 @@ function Card({ it, pos, isFav, toggleFav, onOpen }) {
   const dist = (pos && it.lat) ? hav(pos.lat, pos.lng, it.lat, it.lng) : null
   return (
     <div className="card">
+      <div className="thumb" style={{ background: grad(g.color) }} onClick={onOpen}>{g.emoji}</div>
       <div className="cinfo" onClick={onOpen}>
-        <div className="cnm"><span className="cdot" style={{ background: g.color }} />{it.n}</div>
+        <div className="cnm">{it.n}</div>
         {it.note && <div className="cnote">{it.note}</div>}
         <div className="ctags">
-          <span className="pill area">{it.a}</span>
-          <span className="pill cat">{g.emoji} {it.tag || g.label}</span>
-          {it.rain && <span className="pill rain">☔</span>}
+          <span className="pill area">📍{it.a}</span>
+          <span className="pill cat">{it.tag || g.label}</span>
+          {it.rain && <span className="pill rain">☔실내</span>}
           {dist != null && <span className="pill dist">{fmtD(dist)}</span>}
         </div>
       </div>
@@ -122,36 +124,58 @@ function Explore({ pos, locate, gpsMsg, favs, isFav, toggleFav, setDetail }) {
     return r
   }, [q, grp, pos])
 
+  const showHome = grp === 'all' && !q.trim()
+  const PG = ['linear-gradient(135deg,#ff4d8d,#ff8a3d)', 'linear-gradient(135deg,#7c5cff,#2a9df4)', 'linear-gradient(135deg,#15c39a,#2a9df4)', 'linear-gradient(135deg,#ff8a00,#ff5638)', 'linear-gradient(135deg,#ff5638,#ff4d8d)', 'linear-gradient(135deg,#2a9df4,#7c5cff)']
   return (
     <div>
-      <div className="picks">
-        <div className="picksH">📸 인스타 감성 PICK</div>
-        <div className="picksRow">
-          {PICKS.map((p, i) =>
-            <div key={i} className="pick" onClick={() => { const m = ALL.find(x => x.n.includes(p.n.slice(0, 4)) || p.n.includes(x.n.slice(0, 4))); if (m) setDetail(m) }}>
-              <div className="pickN">{p.n}</div>
-              <div className="pickA">{p.a}</div>
-              <div className="pickC">{p.cap}</div>
-              <div className="pickL">
-                <button onClick={(e) => { e.stopPropagation(); openUrl(igUrl(p.n, p.ig)) }}>📷 인스타</button>
-                <button onClick={(e) => { e.stopPropagation(); openUrl(dirUrl(p.n, null, null, pos)) }}>🧭 길찾기</button>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      <input className="search" placeholder="🔎 검색: 라멘, 가챠, 비오는날 카페, 우메다…" value={q} onChange={e => setQ(e.target.value)} />
+      <input className="search" placeholder="🔎 라멘, 가챠, 비오는날 카페, 우메다…" value={q} onChange={e => setQ(e.target.value)} />
       <div className="gpsRow">
-        <button className="gpsBtn" onClick={() => locate()}>📍 내 위치 잡고 가까운 순</button>
+        <button className="gpsBtn" onClick={() => locate()}>📍 내 위치 · 가까운 순</button>
         {gpsMsg && <span className="muted">{gpsMsg}</span>}
       </div>
+
+      {showHome &&
+        <div className="cats">
+          {groupKeys.map(k =>
+            <button key={k} className="catTile" style={{ background: grad(GROUPS[k].color) }} onClick={() => setGrp(k)}>
+              <span className="catE">{GROUPS[k].emoji}</span>
+              <span className="catL">{GROUPS[k].label}</span>
+              <span className="catC">{ALL.filter(x => x.g === k).length}곳</span>
+            </button>
+          )}
+        </div>}
+
+      {showHome &&
+        <div className="picks">
+          <div className="picksH">📸 인스타 감성 PICK</div>
+          <div className="picksRow">
+            {PICKS.map((p, i) => {
+              const m = ALL.find(x => x.n.includes(p.n.slice(0, 4)) || p.n.includes(x.n.slice(0, 4)))
+              const em = (m && GROUPS[m.g]) ? GROUPS[m.g].emoji : '✨'
+              return (
+                <div key={i} className="pick" onClick={() => { if (m) setDetail(m) }}>
+                  <div className="pickTop" style={{ background: PG[i % PG.length] }}>{em}</div>
+                  <div className="pickBody">
+                    <div className="pickN">{p.n}</div>
+                    <div className="pickA">📍 {p.a}</div>
+                    <div className="pickC">{p.cap}</div>
+                    <div className="pickL">
+                      <button onClick={(e) => { e.stopPropagation(); openUrl(igUrl(p.n, p.ig)) }}>📷 인스타</button>
+                      <button onClick={(e) => { e.stopPropagation(); openUrl(dirUrl(p.n, null, null, pos)) }}>🧭 길찾기</button>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>}
+
       <div className="chips">
         <Chip on={grp === 'all'} onClick={() => setGrp('all')}>전체 {ALL.length}</Chip>
         <Chip on={grp === 'rain'} onClick={() => setGrp('rain')}>☔ 실내</Chip>
         {groupKeys.map(k => <Chip key={k} on={grp === k} onClick={() => setGrp(k)}>{GROUPS[k].emoji} {GROUPS[k].label}</Chip>)}
       </div>
-      <div className="count">{items.length}곳{pos ? ' · 가까운 순' : ''}</div>
+      <div className="count">{items.length}곳{pos ? ' · 가까운 순' : ''}{showHome ? ' · 전체' : ''}</div>
       <div className="list">
         {items.map(it => <Card key={it.id} {...{ it, pos, isFav, toggleFav }} onOpen={() => setDetail(it)} />)}
       </div>
@@ -271,6 +295,8 @@ function Detail({ item, pos, isFav, toggleFav, addToDay, onClose }) {
         <span className="muted">{g.emoji} {g.label} · {item.a}</span>
       </div>
       <div className="modalBody">
+        <div className="dHero" style={{ background: grad(g.color) }}>{g.emoji}</div>
+        <div className="modalIn">
         <div className="dTitle">{item.n}</div>
         <div className="ctags">
           <span className="pill area">{item.a}</span>
@@ -291,6 +317,7 @@ function Detail({ item, pos, isFav, toggleFav, addToDay, onClose }) {
           <div className="addRow">{PLAN.map((d, i) => <button key={i} onClick={() => { addToDay(i, item.id); alert(d.d + '에 담았어요!') }}>{d.d.replace(/·.*/, '').replace(/[^0-9A-Za-z가-힣/ ]/g, '').trim() || ('Day' + i)}</button>)}</div>
         </div>
         <div className="muted small">📷 실제 인스타 피드 / 🧭 현재위치→여기 길찾기(구글맵 앱)</div>
+        </div>
       </div>
     </div>
   )
