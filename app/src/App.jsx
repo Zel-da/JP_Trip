@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react'
-import { ALL, GROUPS, PICKS, specialDetail } from './data.js'
+import { ALL, GROUPS, PICKS, specialDetail, getHours } from './data.js'
 import { INFO, PLAN, PHRASES } from './info.js'
 import L from 'leaflet'
 import 'leaflet.markercluster'
@@ -89,12 +89,14 @@ export default function App() {
 function Card({ it, pos, isFav, toggleFav, onOpen }) {
   const g = GROUPS[it.g] || { color: '#888', emoji: '📍', label: it.gl }
   const dist = (pos && it.lat) ? hav(pos.lat, pos.lng, it.lat, it.lng) : null
+  const h = getHours(it.n)
   return (
     <div className="card">
       <div className="thumb" style={{ background: grad(g.color) }} onClick={onOpen}>{g.emoji}</div>
       <div className="cinfo" onClick={onOpen}>
         <div className="cnm">{it.n}</div>
         {it.note && <div className="cnote">{it.note}</div>}
+        {h && <div className="chours">⏰ {h}</div>}
         <div className="ctags">
           <span className="pill area">📍{it.a}</span>
           <span className="pill cat">{it.tag || g.label}</span>
@@ -287,6 +289,7 @@ function Info() {
 function Detail({ item, pos, isFav, toggleFav, addToDay, onClose }) {
   const g = GROUPS[item.g] || { emoji: '📍', label: item.gl, color: '#888' }
   const sp = specialDetail(item.n)
+  const h = getHours(item.n)
   const dist = (pos && item.lat) ? hav(pos.lat, pos.lng, item.lat, item.lng) : null
   return (
     <div className="modal">
@@ -305,6 +308,12 @@ function Detail({ item, pos, isFav, toggleFav, addToDay, onClose }) {
           {dist != null && <span className="pill dist">{fmtD(dist)}</span>}
         </div>
         {item.note && <p className="dNote">{item.note}</p>}
+        <div className="hoursBox">
+          <div className="hoursH">⏰ 영업시간 · 휴무</div>
+          <div className="hoursV">{h || '앱엔 미입력 — 아래 버튼으로 구글맵 실시간 확인'}</div>
+          <button className="hoursBtn" onClick={() => openUrl(seeUrl(item.n, item.lat, item.lng))}>🔍 구글맵에서 실시간 영업시간 보기</button>
+          <div className="muted small" style={{ marginTop: 6 }}>※ 영업시간·휴무는 자주 바뀌어요. 방문 전 구글맵 재확인!</div>
+        </div>
         {sp && <div className="note" dangerouslySetInnerHTML={{ __html: sp }} />}
         <div className="dBtns">
           <button className={'db' + (isFav(item.id) ? ' fav' : '')} onClick={() => toggleFav(item.id)}>{isFav(item.id) ? '♥ 저장됨' : '♡ 즐겨찾기'}</button>
