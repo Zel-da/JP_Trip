@@ -102,6 +102,16 @@ table.jp b{color:var(--accent2)}
 .addH{font-weight:700;font-size:13.5px;margin-bottom:8px}
 .addRow{display:flex;gap:6px;flex-wrap:wrap}
 .addRow button{flex:1;min-width:60px;background:var(--card2);border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:9px 4px;font-size:12px;font-weight:700}
+/* login */
+.login{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px;background:radial-gradient(circle at 50% 30%,#1d2230,#0f1115)}
+.loginCard{width:100%;max-width:340px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:30px 22px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,.5)}
+.loginEmoji{font-size:48px}
+.loginT{font-size:19px;font-weight:800;margin-top:8px}
+.loginS{color:var(--sub);font-size:13px;margin:4px 0 18px}
+.loginInput{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card2);color:var(--ink);font-size:18px;text-align:center;letter-spacing:4px}
+.loginErr{color:#ff7b6b;font-size:13px;margin-top:9px}
+.loginBtn{width:100%;margin-top:14px;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:800;background:linear-gradient(135deg,#e8513a,#ff7b4a);color:#fff}
+.lockBtn{background:var(--card2);border:1px solid var(--line);color:var(--sub);border-radius:10px;padding:9px 14px;font-size:12.5px;font-weight:700}
 /* leaflet cluster on dark */
 .leaflet-popup-content{font-family:inherit}
 .marker-cluster{background:rgba(255,90,60,.3)}

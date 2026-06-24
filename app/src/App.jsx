@@ -19,6 +19,9 @@ const igUrl = (name, h) => h ? `https://instagram.com/${h}` : `https://www.insta
 const hav = (a, b, c, d) => { const R = 6371000, p = Math.PI / 180; const x = (c - a) * p, y = (d - b) * p; const s = Math.sin(x / 2) ** 2 + Math.cos(a * p) * Math.cos(c * p) * Math.sin(y / 2) ** 2; return 2 * R * Math.asin(Math.sqrt(s)) }
 const fmtD = (m) => m < 1000 ? Math.round(m) + 'm' : (m / 1000).toFixed(1) + 'km'
 
+// 🔒 비밀번호: 바꾸려면 따옴표 안 값만 수정 후 재빌드/배포
+const PASS = '0627'
+
 function useLS(key, init) {
   const [v, setV] = useState(() => { try { const s = localStorage.getItem(key); return s ? JSON.parse(s) : init } catch { return init } })
   useEffect(() => { try { localStorage.setItem(key, JSON.stringify(v)) } catch {} }, [key, v])
@@ -27,6 +30,7 @@ function useLS(key, init) {
 
 /* ---------- App ---------- */
 export default function App() {
+  const [authed, setAuthed] = useLS('og_auth', false)
   const [view, setView] = useState('explore')
   const [pos, setPos] = useState(null)
   const [favs, setFavs] = useLS('og_favs', [])
@@ -51,6 +55,8 @@ export default function App() {
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
     )
   }
+
+  if (!authed) return <Login onOk={() => setAuthed(true)} />
 
   return (
     <div className="app">
@@ -245,6 +251,9 @@ function Info() {
         <button className="accH" onClick={() => setOpen(open === 'jp' ? '' : 'jp')}>🗣️ 일본어 회화<span>{open === 'jp' ? '▾' : '▸'}</span></button>
         {open === 'jp' && <div className="accB"><table className="jp">{PHRASES.map((p, i) => <tr key={i}><td>{p[0]}</td><td>{p[1]}<br /><b>{p[2]}</b></td></tr>)}</table></div>}
       </div>
+      <div style={{ textAlign: 'center', margin: '10px 0' }}>
+        <button className="lockBtn" onClick={() => { localStorage.removeItem('og_auth'); location.reload() }}>🔒 잠그기(로그아웃)</button>
+      </div>
       <div className="foot">정보는 2026.6 기준 · 영업시간·요금·이벤트는 현지 재확인</div>
     </div>
   )
@@ -283,6 +292,33 @@ function Detail({ item, pos, isFav, toggleFav, addToDay, onClose }) {
         </div>
         <div className="muted small">📷 실제 인스타 피드 / 🧭 현재위치→여기 길찾기(구글맵 앱)</div>
       </div>
+    </div>
+  )
+}
+
+/* ---------- Login (passcode) ---------- */
+function Login({ onOk }) {
+  const [v, setV] = useState('')
+  const [err, setErr] = useState(false)
+  const submit = (e) => {
+    e.preventDefault()
+    if (v.trim() === PASS) onOk()
+    else { setErr(true); setV('') }
+  }
+  return (
+    <div className="login">
+      <form className="loginCard" onSubmit={submit}>
+        <div className="loginEmoji">🐙</div>
+        <div className="loginT">오사카 커플 가이드</div>
+        <div className="loginS">우리만의 비밀번호를 입력하세요 🔒</div>
+        <input
+          autoFocus type="password" inputMode="numeric"
+          value={v} onChange={e => { setV(e.target.value); setErr(false) }}
+          placeholder="비밀번호" className="loginInput"
+        />
+        {err && <div className="loginErr">비밀번호가 틀렸어요 😢</div>}
+        <button className="loginBtn" type="submit">들어가기</button>
+      </form>
     </div>
   )
 }
